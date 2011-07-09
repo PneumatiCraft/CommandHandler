@@ -1,0 +1,5 @@
+CommandHandler is a command parser and handler for Bukkit. It deals with
+incoming player commands and dispatches them to the appropriate Java
+classes.
+
+CommandHandler is released under the BSD license.
