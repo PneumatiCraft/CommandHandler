@@ -2,6 +2,7 @@ package com.pneumaticraft.commandhandler;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -13,20 +14,46 @@ public class CommandHandler {
 	protected JavaPlugin plugin;
 	
 	protected List<QueuedCommand> queuedCommands;
+	protected List<Command> allCommands;
 	
 	public CommandHandler(JavaPlugin plugin) {
 		this.plugin = plugin;
+		
+		this.allCommands = new ArrayList<Command>();
+		this.queuedCommands = new ArrayList<QueuedCommand>();
 	}
 	
+	public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
+		ArrayList<String> parsedArgs = parseAllQuotedStrings(args);
+		String key = null;
 
+		Iterator<Command> iterator = this.allCommands.iterator();
+		Command foundCommand = null;
+		while (iterator.hasNext() && key == null) {
+			foundCommand = iterator.next();
+			key = foundCommand.getKey(parsedArgs);
+			if (key != null) {
+				// This method, removeKeyArgs mutates parsedArgs
+				foundCommand.removeKeyArgs(parsedArgs, key);
+				checkAndRunCommand(sender, parsedArgs, foundCommand);
+			}
+		}
+		return true;
+	}
+	
+	public void registerCommand(Command command) {
+		this.allCommands.add(command);
+	}
+	
     /**
      * Combines all quoted strings
      * 
      * @param args
      * @return
      */
-    private ArrayList<String> parseAllQuotedStrings(ArrayList<String> args) {
+    private ArrayList<String> parseAllQuotedStrings(List<String> args) {
         // TODO: Allow '
+    	// TODO: make less awkward, less magical
         ArrayList<String> newArgs = new ArrayList<String>();
         // Iterate through all command params:
         // we could have: "Fish dog" the man bear pig "lives today" and maybe "even tomorrow" or "the" next day
@@ -37,7 +64,7 @@ public class CommandHandler {
             if (start == -1 && args.get(i).substring(0, 1).equals("\"")) {
                 start = i;
             }
-            // Have to keep this seperate for one word quoted strings like: "fish"
+            // Have to keep this separate for one word quoted strings like: "fish"
             if (start != -1 && args.get(i).substring(args.get(i).length() - 1, args.get(i).length()).equals("\"")) {
                 // Now we've found the second part of a string, let's parse the quoted one out
                 // Make sure it's i+1, we still want I included
@@ -138,11 +165,21 @@ public class CommandHandler {
      * @param stop
      * @return
      */
-    private String parseQuotedString(ArrayList<String> args, int start, int stop) {
+    private String parseQuotedString(List<String> args, int start, int stop) {
         String returnVal = args.get(start);
         for (int i = start + 1; i < stop; i++) {
             returnVal += " " + args.get(i);
         }
         return returnVal.replace("\"", "");
+    }
+	
+	private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand) {
+        if (foundCommand.checkArgLength(parsedArgs)) {
+        	//TODO permissions
+            foundCommand.runCommand(sender, parsedArgs);
+        } else {
+        	//TODO make me pretty
+            sender.sendMessage(foundCommand.commandUsage);
+        }
     }
 }
