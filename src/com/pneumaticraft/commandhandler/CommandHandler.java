@@ -10,41 +10,44 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CommandHandler {
-	
-	protected JavaPlugin plugin;
-	
-	protected List<QueuedCommand> queuedCommands;
-	protected List<Command> allCommands;
-	
-	public CommandHandler(JavaPlugin plugin) {
-		this.plugin = plugin;
-		
-		this.allCommands = new ArrayList<Command>();
-		this.queuedCommands = new ArrayList<QueuedCommand>();
-	}
-	
-	public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
-		ArrayList<String> parsedArgs = parseAllQuotedStrings(args);
-		String key = null;
 
-		Iterator<Command> iterator = this.allCommands.iterator();
-		Command foundCommand = null;
-		while (iterator.hasNext() && key == null) {
-			foundCommand = iterator.next();
-			key = foundCommand.getKey(parsedArgs);
-			if (key != null) {
-				// This method, removeKeyArgs mutates parsedArgs
-				foundCommand.removeKeyArgs(parsedArgs, key);
-				checkAndRunCommand(sender, parsedArgs, foundCommand);
-			}
-		}
-		return true;
-	}
-	
-	public void registerCommand(Command command) {
-		this.allCommands.add(command);
-	}
-	
+    protected JavaPlugin plugin;
+
+    protected List<QueuedCommand> queuedCommands;
+    protected List<Command> allCommands;
+
+    protected PermissionsInterface permissions;
+
+    public CommandHandler(JavaPlugin plugin, PermissionsInterface permissions) {
+        this.plugin = plugin;
+
+        this.allCommands = new ArrayList<Command>();
+        this.queuedCommands = new ArrayList<QueuedCommand>();
+        this.permissions = permissions;
+    }
+
+    public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
+        ArrayList<String> parsedArgs = parseAllQuotedStrings(args);
+        String key = null;
+
+        Iterator<Command> iterator = this.allCommands.iterator();
+        Command foundCommand = null;
+        while (iterator.hasNext() && key == null) {
+            foundCommand = iterator.next();
+            key = foundCommand.getKey(parsedArgs);
+            if (key != null) {
+                // This method, removeKeyArgs mutates parsedArgs
+                foundCommand.removeKeyArgs(parsedArgs, key);
+                checkAndRunCommand(sender, parsedArgs, foundCommand);
+            }
+        }
+        return true;
+    }
+
+    public void registerCommand(Command command) {
+        this.allCommands.add(command);
+    }
+
     /**
      * Combines all quoted strings
      * 
@@ -53,7 +56,7 @@ public class CommandHandler {
      */
     private ArrayList<String> parseAllQuotedStrings(List<String> args) {
         // TODO: Allow '
-    	// TODO: make less awkward, less magical
+        // TODO: make less awkward, less magical
         ArrayList<String> newArgs = new ArrayList<String>();
         // Iterate through all command params:
         // we could have: "Fish dog" the man bear pig "lives today" and maybe "even tomorrow" or "the" next day
@@ -135,7 +138,7 @@ public class CommandHandler {
             this.queuedCommands.remove(c);
         }
     }
-	
+
     /**
      * Returns the given flag value
      * 
@@ -156,7 +159,7 @@ public class CommandHandler {
         }
         return null;
     }
-	
+
     /**
      * Takes a string array and returns a combined string, excluding the stop position, including the start
      * 
@@ -172,13 +175,16 @@ public class CommandHandler {
         }
         return returnVal.replace("\"", "");
     }
-	
-	private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand) {
+
+    private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand) {
         if (foundCommand.checkArgLength(parsedArgs)) {
-        	//TODO permissions
-            foundCommand.runCommand(sender, parsedArgs);
+            if (this.permissions.hasPermission(sender, foundCommand.getPermission(), foundCommand.isOpRequired())) {
+                foundCommand.runCommand(sender, parsedArgs);
+            } else {
+                sender.sendMessage("You do not have the required permission (" + foundCommand.getPermission() + ").");
+            }
         } else {
-        	//TODO make me pretty
+            // TODO make me pretty
             sender.sendMessage(foundCommand.commandUsage);
         }
     }
