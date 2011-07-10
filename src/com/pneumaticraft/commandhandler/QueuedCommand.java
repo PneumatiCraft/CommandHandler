@@ -10,7 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class QueuedCommand {
 	private String name;
-    private List<Object> args;
+    private List<String> args;
     private Class<?> paramTypes[];
     private CommandSender sender;
     private JavaPlugin plugin;
@@ -18,7 +18,7 @@ public class QueuedCommand {
     private String success;
     private String fail;
     
-    public QueuedCommand(String commandName, List<Object> args, Class<?> partypes[], CommandSender sender, Calendar instance, JavaPlugin plugin, String success, String fail) {
+    public QueuedCommand(String commandName, List<String> args, Class<?> partypes[], CommandSender sender, Calendar instance, JavaPlugin plugin, String success, String fail) {
         this.plugin = plugin;
         this.name = commandName;
         this.args = args;
