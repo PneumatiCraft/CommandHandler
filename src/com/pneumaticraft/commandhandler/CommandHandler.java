@@ -143,12 +143,12 @@ public class CommandHandler {
      * @param args All arguments to search through
      * @return A string or null
      */
-    public static String getFlag(String flag, String[] args) {
+    public static String getFlag(String flag, List<String> args) {
         int i = 0;
         try {
             for (String s : args) {
                 if (s.equalsIgnoreCase(flag)) {
-                    return args[i + 1];
+                    return args.get(i + 1);
                 }
                 i++;
             }
