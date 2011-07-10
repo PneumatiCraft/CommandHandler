@@ -88,7 +88,7 @@ public class CommandHandler {
     /**
      * 
      */
-    public void queueCommand(CommandSender sender, String commandName, String methodName, String[] args, Class<?>[] paramTypes, String success, String fail) {
+    public void queueCommand(CommandSender sender, String commandName, String methodName, List<Object> args, Class<?>[] paramTypes, String success, String fail) {
         cancelQueuedCommand(sender);
         this.queuedCommands.add(new QueuedCommand(methodName, args, paramTypes, sender, Calendar.getInstance(), this.plugin, success, fail));
         sender.sendMessage("The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could break something!");

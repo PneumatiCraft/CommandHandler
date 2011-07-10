@@ -3,13 +3,14 @@ package com.pneumaticraft.commandhandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Calendar;
+import java.util.List;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class QueuedCommand {
 	private String name;
-    private Object[] args;
+    private List<Object> args;
     private Class<?> paramTypes[];
     private CommandSender sender;
     private JavaPlugin plugin;
@@ -17,7 +18,7 @@ public class QueuedCommand {
     private String success;
     private String fail;
     
-    public QueuedCommand(String commandName, Object[] args, Class<?> partypes[], CommandSender sender, Calendar instance, JavaPlugin plugin, String success, String fail) {
+    public QueuedCommand(String commandName, List<Object> args, Class<?> partypes[], CommandSender sender, Calendar instance, JavaPlugin plugin, String success, String fail) {
         this.plugin = plugin;
         this.name = commandName;
         this.args = args;
