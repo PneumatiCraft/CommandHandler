@@ -35,6 +35,10 @@ public class CommandHandler {
         }
         return permissiveCommands;
     }
+    
+    public List<Command> getAllCommands() {
+        return this.allCommands;
+    }
 
     public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
         ArrayList<String> parsedArgs = parseAllQuotedStrings(args);
