@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class Command {
-    private JavaPlugin plugin;
+    protected JavaPlugin plugin;
 
     protected String permission;
     protected boolean opRequired;
