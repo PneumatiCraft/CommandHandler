@@ -25,6 +25,16 @@ public class CommandHandler {
         this.queuedCommands = new ArrayList<QueuedCommand>();
         this.permissions = permissions;
     }
+    
+    public List<Command> getCommands(CommandSender sender) {
+        List<Command> permissiveCommands = new ArrayList<Command>();
+        for(Command c : this.allCommands) {
+            if(this.permissions.hasPermission(sender, c.getPermission(), c.isOpRequired())) {
+                permissiveCommands.add(c);
+            }
+        }
+        return permissiveCommands;
+    }
 
     public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
         ArrayList<String> parsedArgs = parseAllQuotedStrings(args);
