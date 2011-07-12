@@ -52,7 +52,13 @@ public class CommandHandler {
             if (key != null) {
                 // This method, removeKeyArgs mutates parsedArgs
                 foundCommand.removeKeyArgs(parsedArgs, key);
-                checkAndRunCommand(sender, parsedArgs, foundCommand);
+                // Special case:
+                // If the ONLY param is a '?' show them the usage.
+                if(parsedArgs.size() == 1 && parsedArgs.get(0).equals("?")) {
+                    this.showHelp(sender, foundCommand);
+                } else {
+                    checkAndRunCommand(sender, parsedArgs, foundCommand);
+                }
             }
         }
         return true;
@@ -200,10 +206,14 @@ public class CommandHandler {
             }
         } else {
             // TODO make me pretty
-            sender.sendMessage(foundCommand.commandName);
-            sender.sendMessage(foundCommand.commandDesc);
-            sender.sendMessage(foundCommand.commandUsage);
-            sender.sendMessage(foundCommand.permission);
+            showHelp(sender, foundCommand);
         }
+    }
+
+    private void showHelp(CommandSender sender, Command foundCommand) {
+        sender.sendMessage(foundCommand.commandName);
+        sender.sendMessage(foundCommand.commandDesc);
+        sender.sendMessage(foundCommand.commandUsage);
+        sender.sendMessage(foundCommand.permission);
     }
 }
