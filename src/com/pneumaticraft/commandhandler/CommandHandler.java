@@ -84,11 +84,11 @@ public class CommandHandler {
         for (int i = 0; i < args.size(); i++) {
 
             // If we aren't looking for an end quote, and the first part of a string is a quote
-            if (start == -1 && args.get(i).substring(0, 1).equals("\"")) {
+            if (start == -1 && args.get(i).substring(0, 1).matches("[\"']")) {
                 start = i;
             }
             // Have to keep this separate for one word quoted strings like: "fish"
-            if (start != -1 && args.get(i).substring(args.get(i).length() - 1, args.get(i).length()).equals("\"")) {
+            if (start != -1 && args.get(i).substring(args.get(i).length() - 1, args.get(i).length()).matches("[\"']")) {
                 // Now we've found the second part of a string, let's parse the quoted one out
                 // Make sure it's i+1, we still want I included
                 newArgs.add(parseQuotedString(args, start, i + 1));
@@ -193,7 +193,7 @@ public class CommandHandler {
         for (int i = start + 1; i < stop; i++) {
             returnVal += " " + args.get(i);
         }
-        return returnVal.replace("\"", "");
+        return returnVal.replace("\"", "").replace("'", "");
     }
 
     private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand) {
