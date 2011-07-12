@@ -200,7 +200,10 @@ public class CommandHandler {
             }
         } else {
             // TODO make me pretty
+            sender.sendMessage(foundCommand.commandName);
+            sender.sendMessage(foundCommand.commandDesc);
             sender.sendMessage(foundCommand.commandUsage);
+            sender.sendMessage(foundCommand.permission);
         }
     }
 }
