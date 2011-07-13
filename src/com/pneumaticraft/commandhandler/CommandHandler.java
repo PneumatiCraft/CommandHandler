@@ -211,9 +211,9 @@ public class CommandHandler {
     }
 
     private void showHelp(CommandSender sender, Command foundCommand) {
-        sender.sendMessage(foundCommand.commandName);
-        sender.sendMessage(foundCommand.commandDesc);
-        sender.sendMessage(foundCommand.commandUsage);
-        sender.sendMessage(foundCommand.permission);
+        sender.sendMessage(ChatColor.AQUA + foundCommand.commandName);
+        sender.sendMessage(ChatColor.GOLD + foundCommand.commandDesc);
+        sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.commandUsage);
+        sender.sendMessage(ChatColor.GREEN + foundCommand.permission);
     }
 }
