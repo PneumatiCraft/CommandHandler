@@ -1,6 +1,5 @@
 package com.pneumaticraft.commandhandler;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.List;
@@ -38,28 +37,9 @@ public class QueuedCommand {
         if (this.timeRequested.after(Calendar.getInstance())) {
             try {
                 Method method = this.plugin.getClass().getMethod(this.name, this.paramTypes);
-                try {
-                    method.invoke(this.plugin, this.args);
-                } catch (IllegalArgumentException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    return false;
-                } catch (IllegalAccessException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    return false;
-                } catch (InvocationTargetException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    return false;
-                }
-            } catch (SecurityException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return false;
-            } catch (NoSuchMethodException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Object[] listAsArray = this.args.toArray(new String[this.args.size()]);
+                method.invoke(this.plugin, listAsArray);
+            } catch (Exception e) {
                 return false;
             }
             return true;
