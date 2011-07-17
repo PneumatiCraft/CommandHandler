@@ -199,13 +199,12 @@ public class CommandHandler {
     private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand) {
         if (foundCommand.checkArgLength(parsedArgs)) {
             // Or used so if someone doesn't implement permissions interface, all commands will run.
-            if (this.permissions == null || this.permissions.hasPermission(sender, foundCommand.getPermissionString(), foundCommand.isOpRequired())) {
+            if (this.permissions != null && this.permissions.hasPermission(sender, foundCommand.getPermissionString(), foundCommand.isOpRequired())) {
                 foundCommand.runCommand(sender, parsedArgs);
             } else {
-                sender.sendMessage("You do not have the required permission (" + foundCommand.getPermission() + ").");
+                sender.sendMessage("You do not have the required permission (" + foundCommand.getPermissionString() + ").");
             }
         } else {
-            // TODO make me pretty
             showHelp(sender, foundCommand);
         }
     }
