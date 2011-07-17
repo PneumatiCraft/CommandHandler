@@ -29,7 +29,7 @@ public class CommandHandler {
     public List<Command> getCommands(CommandSender sender) {
         List<Command> permissiveCommands = new ArrayList<Command>();
         for(Command c : this.allCommands) {
-            if(this.permissions.hasPermission(sender, c.getPermission(), c.isOpRequired())) {
+            if(this.permissions.hasPermission(sender, c.getPermissionString(), c.isOpRequired())) {
                 permissiveCommands.add(c);
             }
         }
@@ -199,7 +199,7 @@ public class CommandHandler {
     private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand) {
         if (foundCommand.checkArgLength(parsedArgs)) {
             // Or used so if someone doesn't implement permissions interface, all commands will run.
-            if (this.permissions == null || this.permissions.hasPermission(sender, foundCommand.getPermission(), foundCommand.isOpRequired())) {
+            if (this.permissions == null || this.permissions.hasPermission(sender, foundCommand.getPermissionString(), foundCommand.isOpRequired())) {
                 foundCommand.runCommand(sender, parsedArgs);
             } else {
                 sender.sendMessage("You do not have the required permission (" + foundCommand.getPermission() + ").");
@@ -211,9 +211,9 @@ public class CommandHandler {
     }
 
     private void showHelp(CommandSender sender, Command foundCommand) {
-        sender.sendMessage(ChatColor.AQUA + foundCommand.commandName);
-        sender.sendMessage(ChatColor.GOLD + foundCommand.commandDesc);
-        sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.commandUsage);
-        sender.sendMessage(ChatColor.GREEN + foundCommand.permission);
+        sender.sendMessage(ChatColor.AQUA + foundCommand.getCommandName());
+        sender.sendMessage(ChatColor.GOLD + foundCommand.getCommandDesc());
+        sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.getCommandUsage());
+        sender.sendMessage(ChatColor.GREEN + foundCommand.getPermissionString());
     }
 }

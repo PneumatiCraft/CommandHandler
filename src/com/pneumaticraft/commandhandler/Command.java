@@ -4,27 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class Command {
-    protected JavaPlugin plugin;
+    private JavaPlugin plugin;
 
-    protected String permission;
-    protected boolean opRequired;
+    private String permissionString;
+    private boolean opRequired;
 
-    protected int minimumArgLength;
-    protected int maximumArgLength;
+    private int minimumArgLength;
+    private int maximumArgLength;
 
-    protected String commandName;
-    protected String commandDesc;
-    protected String commandExample;
-    protected String commandUsage;
+    private String commandName;
+    private String commandDesc;
+    private String commandExample;
+    private String commandUsage;
 
-    protected List<String> commandKeys;
+    private List<String> commandKeys;
+
+    private Permission permission;
 
     public Command(JavaPlugin plugin) {
         this.plugin = plugin;
-
+        
         this.commandKeys = new ArrayList<String>();
     }
 
@@ -66,8 +70,19 @@ public abstract class Command {
         return args;
     }
 
-    public String getPermission() {
+    public String getPermissionString() {
+        return this.permissionString;
+    }
+    
+    public Permission getPermission() {
         return this.permission;
+    }
+    
+    public void setPermission(String p, String desc, PermissionDefault defaultPerm) {
+        this.opRequired = (defaultPerm == PermissionDefault.OP);
+        this.permissionString = p;
+        this.permission = new Permission(p, desc, defaultPerm);
+        this.plugin.getServer().getPluginManager().addPermission(this.permission);
     }
 
     public boolean isOpRequired() {
@@ -88,6 +103,14 @@ public abstract class Command {
 
     public String getCommandUsage() {
         return this.commandUsage;
+    }
+    
+    public void setCommandExample(String example) {
+        this.commandExample = example;
+    }
+
+    public void setCommandUsage(String usage) {
+        this.commandUsage = usage;
     }
 
     /**
