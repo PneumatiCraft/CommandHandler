@@ -112,6 +112,19 @@ public abstract class Command {
     public void setCommandUsage(String usage) {
         this.commandUsage = usage;
     }
+    
+    public void setArgRange(int min, int max) {
+        this.minimumArgLength = min;
+        this.maximumArgLength = max;
+    }
+    
+    public void setName(String name){
+        this.commandName = name;
+    }
+    
+    public void addKey(String key) {
+        this.commandKeys.add(key);
+    }
 
     /**
      * @return the plugin
