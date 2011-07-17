@@ -18,7 +18,6 @@ public abstract class Command {
     private int maximumArgLength;
 
     private String commandName;
-    private String commandDesc;
     private String commandExample;
     private String commandUsage;
 
@@ -84,6 +83,13 @@ public abstract class Command {
         this.permission = new Permission(p, desc, defaultPerm);
         this.plugin.getServer().getPluginManager().addPermission(this.permission);
     }
+    
+    public void setPermission(Permission perm) {
+        this.opRequired = (perm.getDefault() == PermissionDefault.OP);
+        this.permissionString = perm.getName();
+        this.permission = perm;
+        this.plugin.getServer().getPluginManager().addPermission(this.permission);
+    }
 
     public boolean isOpRequired() {
         return this.opRequired;
@@ -94,7 +100,7 @@ public abstract class Command {
     }
 
     public String getCommandDesc() {
-        return this.commandDesc;
+        return this.permission.getDescription();
     }
 
     public String getCommandExample() {
