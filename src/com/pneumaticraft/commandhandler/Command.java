@@ -90,13 +90,13 @@ public abstract class Command {
     }
 
     private void addToParentPerms(String permString) {
-        String[] seperated = permString.split(".");
+        String[] seperated = permString.split("\\.");
         String cumulativePerm = "";
         Permission tempPerm = null;
         for(String s : seperated) {
             cumulativePerm += s;
             tempPerm = this.plugin.getServer().getPluginManager().getPermission(cumulativePerm + ".*");
-            if(tempPerm != null)
+            if(tempPerm == null)
             {
                 tempPerm = new Permission(cumulativePerm + ".*");
                 this.plugin.getServer().getPluginManager().addPermission(tempPerm);
