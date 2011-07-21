@@ -78,10 +78,7 @@ public abstract class Command {
     }
     
     public void setPermission(String p, String desc, PermissionDefault defaultPerm) {
-        this.opRequired = (defaultPerm == PermissionDefault.OP);
-        this.permissionString = p;
-        this.permission = new Permission(p, desc, defaultPerm);
-        this.plugin.getServer().getPluginManager().addPermission(this.permission);
+        this.setPermission(new Permission(p, desc, defaultPerm));
     }
     
     public void setPermission(Permission perm) {
@@ -89,6 +86,27 @@ public abstract class Command {
         this.permissionString = perm.getName();
         this.permission = perm;
         this.plugin.getServer().getPluginManager().addPermission(this.permission);
+        this.addToParentPerms(this.permissionString);
+    }
+
+    private void addToParentPerms(String permString) {
+        String[] seperated = permString.split(".");
+        String cumulativePerm = "";
+        Permission tempPerm = null;
+        for(String s : seperated) {
+            cumulativePerm += s;
+            tempPerm = this.plugin.getServer().getPluginManager().getPermission(cumulativePerm + ".*");
+            if(tempPerm != null)
+            {
+                tempPerm = new Permission(cumulativePerm + ".*");
+                this.plugin.getServer().getPluginManager().addPermission(tempPerm);
+            }
+            if(!tempPerm.getChildren().containsKey(this.permissionString)) {
+                tempPerm.getChildren().put(this.permissionString, true);
+                this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(tempPerm);
+            }
+            cumulativePerm += ".";
+        }
     }
 
     public boolean isOpRequired() {
