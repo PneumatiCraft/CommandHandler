@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class QueuedCommand {
-	private String name;
+    private String name;
     private List<String> args;
     private Class<?> paramTypes[];
     private CommandSender sender;
@@ -16,7 +16,7 @@ public class QueuedCommand {
     private Calendar timeRequested;
     private String success;
     private String fail;
-    
+
     public QueuedCommand(String commandName, List<String> args, Class<?> partypes[], CommandSender sender, Calendar instance, JavaPlugin plugin, String success, String fail) {
         this.plugin = plugin;
         this.name = commandName;
@@ -27,11 +27,11 @@ public class QueuedCommand {
         this.setSuccess(success);
         this.setFail(fail);
     }
-    
+
     public CommandSender getSender() {
         return this.sender;
     }
-    
+
     public boolean execute() {
         this.timeRequested.add(Calendar.SECOND, 10);
         if (this.timeRequested.after(Calendar.getInstance())) {
@@ -48,19 +48,19 @@ public class QueuedCommand {
         }
         return false;
     }
-    
+
     private void setSuccess(String success) {
         this.success = success;
     }
-    
+
     public String getSuccess() {
         return this.success;
     }
-    
+
     private void setFail(String fail) {
         this.fail = fail;
     }
-    
+
     public String getFail() {
         return this.fail;
     }

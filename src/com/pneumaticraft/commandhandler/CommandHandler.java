@@ -25,17 +25,17 @@ public class CommandHandler {
         this.queuedCommands = new ArrayList<QueuedCommand>();
         this.permissions = permissions;
     }
-    
+
     public List<Command> getCommands(CommandSender sender) {
         List<Command> permissiveCommands = new ArrayList<Command>();
-        for(Command c : this.allCommands) {
-            if(this.permissions.hasPermission(sender, c.getPermissionString(), c.isOpRequired())) {
+        for (Command c : this.allCommands) {
+            if (this.permissions.hasPermission(sender, c.getPermissionString(), c.isOpRequired())) {
                 permissiveCommands.add(c);
             }
         }
         return permissiveCommands;
     }
-    
+
     public List<Command> getAllCommands() {
         return this.allCommands;
     }
@@ -54,7 +54,7 @@ public class CommandHandler {
                 foundCommand.removeKeyArgs(parsedArgs, key);
                 // Special case:
                 // If the ONLY param is a '?' show them the usage.
-                if(parsedArgs.size() == 1 && parsedArgs.get(0).equals("?")) {
+                if (parsedArgs.size() == 1 && parsedArgs.get(0).equals("?")) {
                     this.showHelp(sender, foundCommand);
                 } else {
                     checkAndRunCommand(sender, parsedArgs, foundCommand);
