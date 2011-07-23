@@ -1,6 +1,8 @@
 package com.pneumaticraft.commandhandler;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -27,7 +29,7 @@ public abstract class Command {
 
     public Command(JavaPlugin plugin) {
         this.plugin = plugin;
-        
+
         this.commandKeys = new ArrayList<String>();
     }
 
@@ -37,7 +39,7 @@ public abstract class Command {
         return (this.minimumArgLength == -1 || this.minimumArgLength <= args.size())
                 && (args.size() <= this.maximumArgLength || this.maximumArgLength == -1);
     }
-    
+
     private String getArgsString(List<String> args) {
         String returnString = "";
         for (String s : args) {
@@ -72,15 +74,15 @@ public abstract class Command {
     public String getPermissionString() {
         return this.permissionString;
     }
-    
+
     public Permission getPermission() {
         return this.permission;
     }
-    
+
     public void setPermission(String p, String desc, PermissionDefault defaultPerm) {
         this.setPermission(new Permission(p, desc, defaultPerm));
     }
-    
+
     public void setPermission(Permission perm) {
         this.opRequired = (perm.getDefault() == PermissionDefault.OP);
         this.permissionString = perm.getName();
@@ -93,15 +95,15 @@ public abstract class Command {
         String[] seperated = permString.split("\\.");
         String cumulativePerm = "";
         Permission tempPerm = null;
-        for(String s : seperated) {
+        for (String s : seperated) {
             cumulativePerm += s;
             tempPerm = this.plugin.getServer().getPluginManager().getPermission(cumulativePerm + ".*");
-            if(tempPerm == null)
+            if (tempPerm == null)
             {
                 tempPerm = new Permission(cumulativePerm + ".*");
                 this.plugin.getServer().getPluginManager().addPermission(tempPerm);
             }
-            if(!tempPerm.getChildren().containsKey(this.permissionString)) {
+            if (!tempPerm.getChildren().containsKey(this.permissionString)) {
                 tempPerm.getChildren().put(this.permissionString, true);
                 this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(tempPerm);
             }
@@ -128,7 +130,7 @@ public abstract class Command {
     public String getCommandUsage() {
         return this.commandUsage;
     }
-    
+
     public void setCommandExample(String example) {
         this.commandExample = example;
     }
@@ -136,18 +138,19 @@ public abstract class Command {
     public void setCommandUsage(String usage) {
         this.commandUsage = usage;
     }
-    
+
     public void setArgRange(int min, int max) {
         this.minimumArgLength = min;
         this.maximumArgLength = max;
     }
-    
-    public void setName(String name){
+
+    public void setName(String name) {
         this.commandName = name;
     }
-    
+
     public void addKey(String key) {
         this.commandKeys.add(key);
+        Collections.sort(commandKeys, new ReverseLengthSorter());
     }
 
     /**
@@ -155,5 +158,17 @@ public abstract class Command {
      */
     public JavaPlugin getPlugin() {
         return this.plugin;
+    }
+
+    private class ReverseLengthSorter implements Comparator<String> {
+        public int compare(String stringA, String stringB) {
+            if (stringA.length() > stringB.length()) {
+                return -1;
+            } else if (stringA.length() < stringB.length()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
 }
