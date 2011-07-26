@@ -48,6 +48,16 @@ public abstract class Command {
         return returnString.substring(0, returnString.length() - 1);
     }
 
+    /**
+     * This method is provided as a convenience to add additional permissions recursively to all nodes
+     * 
+     * @param otherPerm The Permission to add.
+     */
+    public void addAdditonalPermission(Permission otherPerm) {
+        this.plugin.getServer().getPluginManager().addPermission(this.permission);
+        this.addToParentPerms(this.permissionString);
+    }
+
     public String getKey(ArrayList<String> parsedArgs) {
         // Combines our args to a space separated string
         String argsString = this.getArgsString(parsedArgs);
