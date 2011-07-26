@@ -54,8 +54,8 @@ public abstract class Command {
      * @param otherPerm The Permission to add.
      */
     public void addAdditonalPermission(Permission otherPerm) {
-        this.plugin.getServer().getPluginManager().addPermission(this.permission);
-        this.addToParentPerms(this.permissionString);
+        this.plugin.getServer().getPluginManager().addPermission(otherPerm);
+        this.addToParentPerms(otherPerm.getName());
     }
 
     public String getKey(ArrayList<String> parsedArgs) {
