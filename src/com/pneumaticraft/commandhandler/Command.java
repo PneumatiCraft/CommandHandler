@@ -190,7 +190,7 @@ public abstract class Command {
 
     public void addKey(String key) {
         this.commandKeys.add(key);
-        Collections.sort(commandKeys, new ReverseLengthSorter());
+        Collections.sort(this.commandKeys, new ReverseLengthSorter());
     }
 
     /**
