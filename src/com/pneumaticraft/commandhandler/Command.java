@@ -54,6 +54,9 @@ public abstract class Command {
      * @param otherPerm The Permission to add.
      */
     public void addAdditonalPermission(Permission otherPerm) {
+        if (otherPerm == null) {
+            System.out.print("Trying to add NULL perm.");
+        }
         this.plugin.getServer().getPluginManager().addPermission(otherPerm);
         this.addToParentPerms(otherPerm.getName());
     }
@@ -102,23 +105,50 @@ public abstract class Command {
     }
 
     private void addToParentPerms(String permString) {
-        String[] seperated = permString.split("\\.");
-        String cumulativePerm = "";
-        Permission tempPerm = null;
-        for (String s : seperated) {
-            cumulativePerm += s;
-            tempPerm = this.plugin.getServer().getPluginManager().getPermission(cumulativePerm + ".*");
-            if (tempPerm == null)
-            {
-                tempPerm = new Permission(cumulativePerm + ".*");
-                this.plugin.getServer().getPluginManager().addPermission(tempPerm);
-            }
-            if (!tempPerm.getChildren().containsKey(this.permissionString)) {
-                tempPerm.getChildren().put(this.permissionString, true);
-                this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(tempPerm);
-            }
-            cumulativePerm += ".";
+        String permStringChopped = permString.replace(".*", "");
+
+        String[] seperated = permStringChopped.split("\\.");
+        String parentPermString = getParentPerm(seperated);
+        if (parentPermString == null) {
+            return;
         }
+        Permission parentPermission = this.plugin.getServer().getPluginManager().getPermission(parentPermString);
+        // Creat parent and grandparents
+        if (parentPermission == null) {
+            parentPermission = new Permission(parentPermString);
+            this.plugin.getServer().getPluginManager().addPermission(parentPermission);
+
+            this.addToParentPerms(parentPermString);
+        }
+        // Create actual perm.
+        Permission actualPermission = this.plugin.getServer().getPluginManager().getPermission(permString);
+        // Extra check just to make sure the actual one is added
+        if (actualPermission == null) {
+
+            actualPermission = new Permission(permString);
+            this.plugin.getServer().getPluginManager().addPermission(actualPermission);
+        }
+        if (!parentPermission.getChildren().containsKey(permString)) {
+            parentPermission.getChildren().put(actualPermission.getName(), true);
+            this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(parentPermission);
+        }
+    }
+
+    /**
+     * If the given permission was 'multiverse.core.tp.self', this would return 'multiverse.core.tp.*'.
+     * 
+     * @param seperated
+     * @return
+     */
+    private String getParentPerm(String[] seperated) {
+        if (seperated.length == 1) {
+            return null;
+        }
+        String returnString = "";
+        for (int i = 0; i < seperated.length - 1; i++) {
+            returnString += seperated[i] + ".";
+        }
+        return returnString + "*";
     }
 
     public boolean isOpRequired() {
