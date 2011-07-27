@@ -82,7 +82,7 @@ public class CommandHandler {
             arg = "";
         } else {
             arg = args.get(0);
-            for(int i = 0; i < args.size(); i++) {
+            for(int i = 1; i < args.size(); i++) {
                 arg = arg + " " + args.get(i);
             }
         }
