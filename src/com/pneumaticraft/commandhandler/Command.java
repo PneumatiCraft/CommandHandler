@@ -61,7 +61,7 @@ public abstract class Command {
         this.addToParentPerms(otherPerm.getName());
     }
 
-    public String getKey(ArrayList<String> parsedArgs) {
+    public String getKey(List<String> parsedArgs) {
         // Combines our args to a space separated string
         String argsString = this.getArgsString(parsedArgs);
 
