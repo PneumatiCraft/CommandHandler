@@ -54,9 +54,6 @@ public abstract class Command {
      * @param otherPerm The Permission to add.
      */
     public void addAdditonalPermission(Permission otherPerm) {
-        if (otherPerm == null) {
-            System.out.print("Trying to add NULL perm.");
-        }
         this.plugin.getServer().getPluginManager().addPermission(otherPerm);
         this.addToParentPerms(otherPerm.getName());
     }
