@@ -2,4 +2,4 @@
 .project
 .settings
 bin
-lib
+lib/*.jar

@@ -1,0 +1,3 @@
+[submodule "lib/ShellParser"]
+	path = lib/ShellParser
+	url = https://github.com/lithium3141/ShellParser
