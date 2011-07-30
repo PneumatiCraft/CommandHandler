@@ -99,7 +99,7 @@ public class CommandHandler {
      * "The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could break something!"
      * "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE
      */
-    public void queueCommand(CommandSender sender, String commandName, String methodName, List<Object> args, Class<?>[] paramTypes, String message, String message2, String success, String fail, int seconds) {
+    public void queueCommand(CommandSender sender, String commandName, String methodName, List<? extends Object> args, Class<?>[] paramTypes, String message, String message2, String success, String fail, int seconds) {
         cancelQueuedCommand(sender);
         this.queuedCommands.add(new QueuedCommand(methodName, args, paramTypes, sender, Calendar.getInstance(), this.plugin, success, fail, seconds));
         message = message.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
@@ -117,7 +117,7 @@ public class CommandHandler {
         sender.sendMessage(ChatColor.GREEN + "/mvconfirm" + ChatColor.WHITE + " will only be available for " + seconds + " seconds.");
     }
     
-    public void queueCommand(CommandSender sender, String commandName, String methodName, List<Object> args, Class<?>[] paramTypes, String success, String fail) {
+    public void queueCommand(CommandSender sender, String commandName, String methodName, List<? extends Object> args, Class<?>[] paramTypes, String success, String fail) {
         this.queueCommand(sender, commandName, methodName, args, paramTypes, null, null, success, fail, 10);
     }
 
