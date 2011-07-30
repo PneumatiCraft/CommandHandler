@@ -32,6 +32,10 @@ public abstract class Command {
 
         this.commandKeys = new ArrayList<String>();
     }
+    
+    public List<String> getKeys() {
+        return this.commandKeys;
+    }
 
     public abstract void runCommand(CommandSender sender, List<String> args);
 

@@ -203,5 +203,11 @@ public class CommandHandler {
         sender.sendMessage(ChatColor.GOLD + foundCommand.getCommandDesc());
         sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.getCommandUsage());
         sender.sendMessage(ChatColor.GREEN + foundCommand.getPermissionString());
+        String keys = "";
+        for(String key : foundCommand.getKeys()) {
+            keys += key + ", ";
+        }
+        keys = keys.substring(0, keys.length() - 2);
+        sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.DARK_RED + keys);
     }
 }
