@@ -117,7 +117,7 @@ public class CommandHandler {
         sender.sendMessage(ChatColor.GREEN + "/mvconfirm" + ChatColor.WHITE + " will only be available for " + seconds + " seconds.");
     }
     
-    public void queueCommand(CommandSender sender, String commandName, String methodName, List<String> args, Class<?>[] paramTypes, String success, String fail) {
+    public void queueCommand(CommandSender sender, String commandName, String methodName, List<Object> args, Class<?>[] paramTypes, String success, String fail) {
         this.queueCommand(sender, commandName, methodName, args, paramTypes, null, null, success, fail, 10);
     }
 
