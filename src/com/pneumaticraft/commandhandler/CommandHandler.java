@@ -101,7 +101,7 @@ public class CommandHandler {
      */
     public void queueCommand(CommandSender sender, String commandName, String methodName, List<String> args, Class<?>[] paramTypes, String message, String message2, String success, String fail, int seconds) {
         cancelQueuedCommand(sender);
-        this.queuedCommands.add(new QueuedCommand(methodName, args, paramTypes, sender, Calendar.getInstance(), this.plugin, success, fail));
+        this.queuedCommands.add(new QueuedCommand(methodName, args, paramTypes, sender, Calendar.getInstance(), this.plugin, success, fail, seconds));
         message = message.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
         message2 = message2.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
         if(message == null) {
@@ -115,6 +115,10 @@ public class CommandHandler {
         sender.sendMessage(message2);
         sender.sendMessage("please type: " + ChatColor.GREEN + "/mvconfirm");
         sender.sendMessage(ChatColor.GREEN + "/mvconfirm" + ChatColor.WHITE + " will only be available for " + seconds + " seconds.");
+    }
+    
+    public void queueCommand(CommandSender sender, String commandName, String methodName, List<String> args, Class<?>[] paramTypes, String success, String fail) {
+        this.queueCommand(sender, commandName, methodName, args, paramTypes, null, null, success, fail, 10);
     }
 
     /**

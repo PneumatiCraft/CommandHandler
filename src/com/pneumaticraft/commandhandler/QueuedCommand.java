@@ -16,8 +16,9 @@ public class QueuedCommand {
     private Calendar timeRequested;
     private String success;
     private String fail;
+    private int expiration;
 
-    public QueuedCommand(String commandName, List<String> args, Class<?> partypes[], CommandSender sender, Calendar instance, JavaPlugin plugin, String success, String fail) {
+    public QueuedCommand(String commandName, List<String> args, Class<?> partypes[], CommandSender sender, Calendar instance, JavaPlugin plugin, String success, String fail, int expiration) {
         this.plugin = plugin;
         this.name = commandName;
         this.args = args;
@@ -26,6 +27,7 @@ public class QueuedCommand {
         this.paramTypes = partypes;
         this.setSuccess(success);
         this.setFail(fail);
+        this.expiration = expiration;
     }
 
     public CommandSender getSender() {
@@ -33,7 +35,7 @@ public class QueuedCommand {
     }
 
     public boolean execute() {
-        this.timeRequested.add(Calendar.SECOND, 10);
+        this.timeRequested.add(Calendar.SECOND, this.expiration);
         if (this.timeRequested.after(Calendar.getInstance())) {
             try {
                 Method method = this.plugin.getClass().getMethod(this.name, this.paramTypes);
