@@ -96,27 +96,30 @@ public class CommandHandler {
     }
 
     /**
-     * "The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could break something!"
-     * "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE
+     * "The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could break something!" "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE
      */
     public void queueCommand(CommandSender sender, String commandName, String methodName, List<? extends Object> args, Class<?>[] paramTypes, String message, String message2, String success, String fail, int seconds) {
         cancelQueuedCommand(sender);
         this.queuedCommands.add(new QueuedCommand(methodName, args, paramTypes, sender, Calendar.getInstance(), this.plugin, success, fail, seconds));
-        message = message.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
-        message2 = message2.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
-        if(message == null) {
+
+        if (message == null) {
             message = "The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could break something!";
-        }
-        if (message2 == null) {
-            message = "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE;
+        } else {
+            message = message.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
         }
         
+        if (message2 == null) {
+            message = "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE;
+        } else {
+            message2 = message2.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
+        }
+
         sender.sendMessage(message);
         sender.sendMessage(message2);
         sender.sendMessage("please type: " + ChatColor.GREEN + "/mvconfirm");
         sender.sendMessage(ChatColor.GREEN + "/mvconfirm" + ChatColor.WHITE + " will only be available for " + seconds + " seconds.");
     }
-    
+
     public void queueCommand(CommandSender sender, String commandName, String methodName, List<? extends Object> args, Class<?>[] paramTypes, String success, String fail) {
         this.queueCommand(sender, commandName, methodName, args, paramTypes, null, null, success, fail, 10);
     }
@@ -204,7 +207,7 @@ public class CommandHandler {
         sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.getCommandUsage());
         sender.sendMessage(ChatColor.GREEN + foundCommand.getPermissionString());
         String keys = "";
-        for(String key : foundCommand.getKeys()) {
+        for (String key : foundCommand.getKeys()) {
             keys += key + ", ";
         }
         keys = keys.substring(0, keys.length() - 2);
