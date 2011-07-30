@@ -78,17 +78,17 @@ public class CommandHandler {
      */
     private List<String> parseAllQuotedStrings(List<String> args) {
         String arg = null;
-        if(args.size() == 0) {
+        if (args.size() == 0) {
             arg = "";
         } else {
             arg = args.get(0);
-            for(int i = 1; i < args.size(); i++) {
+            for (int i = 1; i < args.size(); i++) {
                 arg = arg + " " + args.get(i);
             }
         }
-        
+
         List<String> result = ShellParser.safeParseString(arg);
-        if(result == null) {
+        if (result == null) {
             return new ArrayList<String>();
         } else {
             return result;
@@ -96,15 +96,25 @@ public class CommandHandler {
     }
 
     /**
-     * 
+     * "The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could break something!"
+     * "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE
      */
-    public void queueCommand(CommandSender sender, String commandName, String methodName, List<String> args, Class<?>[] paramTypes, String success, String fail) {
+    public void queueCommand(CommandSender sender, String commandName, String methodName, List<String> args, Class<?>[] paramTypes, String message, String message2, String success, String fail, int seconds) {
         cancelQueuedCommand(sender);
         this.queuedCommands.add(new QueuedCommand(methodName, args, paramTypes, sender, Calendar.getInstance(), this.plugin, success, fail));
-        sender.sendMessage("The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could break something!");
-        sender.sendMessage("If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE);
+        message = message.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
+        message2 = message2.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
+        if(message == null) {
+            message = "The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could break something!";
+        }
+        if (message2 == null) {
+            message = "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE;
+        }
+        
+        sender.sendMessage(message);
+        sender.sendMessage(message2);
         sender.sendMessage("please type: " + ChatColor.GREEN + "/mvconfirm");
-        sender.sendMessage(ChatColor.GREEN + "/mvconfirm" + ChatColor.WHITE + " will only be available for 10 seconds.");
+        sender.sendMessage(ChatColor.GREEN + "/mvconfirm" + ChatColor.WHITE + " will only be available for " + seconds + " seconds.");
     }
 
     /**
@@ -117,11 +127,15 @@ public class CommandHandler {
         for (QueuedCommand com : this.queuedCommands) {
             if (com.getSender().equals(sender)) {
                 if (com.execute()) {
-                    sender.sendMessage(com.getSuccess());
+                    if (com.getSuccess() != null && com.getSuccess().length() > 0) {
+                        sender.sendMessage(com.getSuccess());
+                    }
                     return true;
                 } else {
-                    sender.sendMessage(com.getFail());
-                    return false;
+                    if (com.getFail() != null && com.getFail().length() > 0) {
+                        sender.sendMessage(com.getFail());
+                        return false;
+                    }
                 }
             }
         }
