@@ -45,10 +45,11 @@ public class CommandHandler {
     public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
         List<String> parsedArgs = parseAllQuotedStrings(args);
         CmdKey key = null;
+        boolean commandExecuted = false;
 
         Iterator<Command> iterator = this.allCommands.iterator();
         Command foundCommand = null;
-        while (iterator.hasNext() && key == null) {
+        while (iterator.hasNext() && !commandExecuted) {
             foundCommand = iterator.next();
             key = foundCommand.getKey(parsedArgs);
             if (key != null) {
@@ -58,7 +59,7 @@ public class CommandHandler {
                 // If the ONLY param is a '?' show them the usage.
                 if (parsedArgs.size() == 1 && parsedArgs.get(0).equals("?")) {
                     this.showHelp(sender, foundCommand);
-                } else {
+                } else if(key.hasValidNumberOfArgs(parsedArgs.size())) {
                     checkAndRunCommand(sender, parsedArgs, foundCommand);
                 }
             }
