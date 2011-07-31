@@ -23,17 +23,17 @@ public abstract class Command {
     private String commandExample;
     private String commandUsage;
 
-    private List<String> commandKeys;
+    private List<CmdKey> commandKeys;
 
     private Permission permission;
 
     public Command(JavaPlugin plugin) {
         this.plugin = plugin;
 
-        this.commandKeys = new ArrayList<String>();
+        this.commandKeys = new ArrayList<CmdKey>();
     }
     
-    public List<String> getKeys() {
+    public List<CmdKey> getKeys() {
         return this.commandKeys;
     }
 
@@ -62,14 +62,14 @@ public abstract class Command {
         this.addToParentPerms(otherPerm.getName());
     }
 
-    public String getKey(List<String> parsedArgs) {
+    public CmdKey getKey(List<String> parsedArgs) {
         // Combines our args to a space separated string
         String argsString = this.getArgsString(parsedArgs);
 
-        for (String s : this.commandKeys) {
-            String identifier = s.toLowerCase();
+        for (CmdKey key : this.commandKeys) {
+            String identifier = key.getKey().toLowerCase();
             if (argsString.matches(identifier + "(\\s+.*|\\s*)")) {
-                return identifier;
+                return key;
             }
         }
         return null;
@@ -190,7 +190,12 @@ public abstract class Command {
     }
 
     public void addKey(String key) {
-        this.commandKeys.add(key);
+        this.commandKeys.add(new CmdKey(key, this));
+        Collections.sort(this.commandKeys, new ReverseLengthSorter());
+    }
+    
+    public void addKey(String key, int minArgs, int maxArgs) {
+        this.commandKeys.add(new CmdKey(key, this, minArgs, maxArgs));
         Collections.sort(this.commandKeys, new ReverseLengthSorter());
     }
 
@@ -201,15 +206,23 @@ public abstract class Command {
         return this.plugin;
     }
 
-    private class ReverseLengthSorter implements Comparator<String> {
-        public int compare(String stringA, String stringB) {
-            if (stringA.length() > stringB.length()) {
+    private class ReverseLengthSorter implements Comparator<CmdKey> {
+        public int compare(CmdKey cmdA, CmdKey cmdB) {
+            if (cmdA.getKey().length() > cmdB.getKey().length()) {
                 return -1;
-            } else if (stringA.length() < stringB.length()) {
+            } else if (cmdA.getKey().length() < cmdB.getKey().length()) {
                 return 1;
             } else {
                 return 0;
             }
         }
+    }
+
+    public Integer getMaxArgs() {
+        return this.maximumArgLength;
+    }
+
+    public Integer getMinArgs() {
+        return this.minimumArgLength;
     }
 }

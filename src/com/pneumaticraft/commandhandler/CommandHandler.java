@@ -44,7 +44,7 @@ public class CommandHandler {
 
     public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
         List<String> parsedArgs = parseAllQuotedStrings(args);
-        String key = null;
+        CmdKey key = null;
 
         Iterator<Command> iterator = this.allCommands.iterator();
         Command foundCommand = null;
@@ -53,7 +53,7 @@ public class CommandHandler {
             key = foundCommand.getKey(parsedArgs);
             if (key != null) {
                 // This method, removeKeyArgs mutates parsedArgs
-                foundCommand.removeKeyArgs(parsedArgs, key);
+                foundCommand.removeKeyArgs(parsedArgs, key.getKey());
                 // Special case:
                 // If the ONLY param is a '?' show them the usage.
                 if (parsedArgs.size() == 1 && parsedArgs.get(0).equals("?")) {
@@ -207,8 +207,8 @@ public class CommandHandler {
         sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.getCommandUsage());
         sender.sendMessage(ChatColor.GREEN + foundCommand.getPermissionString());
         String keys = "";
-        for (String key : foundCommand.getKeys()) {
-            keys += key + ", ";
+        for (CmdKey key : foundCommand.getKeys()) {
+            keys += key.getKey() + ", ";
         }
         keys = keys.substring(0, keys.length() - 2);
         sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.DARK_RED + keys);
