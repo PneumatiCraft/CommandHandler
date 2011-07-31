@@ -71,9 +71,6 @@ public abstract class Command {
     public String getKey(List<String> parsedArgs) {
         // Combines our args to a space separated string
         String argsString = this.getArgsString(parsedArgs);
-        System.out.print("Getting the keylist");
-        System.out.print(argsString);
-        System.out.print(this.commandKeys);
 
         for (String key : this.commandKeys) {
             String identifier = key.toLowerCase();
