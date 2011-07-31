@@ -227,8 +227,8 @@ public class CommandHandler {
             }
         } else {
             sender.sendMessage("You do not have any of the required permission(s):");
-            for(String perm : foundCommand.getAllPermissionStrings()) {
-                sender.sendMessage(" - " + ChatColor.GREEN + perm);    
+            for (String perm : foundCommand.getAllPermissionStrings()) {
+                sender.sendMessage(" - " + ChatColor.GREEN + perm);
             }
         }
     }
@@ -244,5 +244,11 @@ public class CommandHandler {
         }
         keys = keys.substring(0, keys.length() - 2);
         sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.DARK_RED + keys);
+        if (foundCommand.getExamples().size() > 0) {
+            sender.sendMessage(ChatColor.YELLOW + "Examples:");
+            for(String ex : foundCommand.getExamples()) {
+                sender.sendMessage(ex);
+            }
+        }
     }
 }

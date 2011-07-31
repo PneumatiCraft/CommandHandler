@@ -21,6 +21,7 @@ public abstract class Command {
     private String commandUsage;
 
     private List<String> commandKeys;
+    private List<String> examples;
 
     private Permission permission;
     private List<Permission> auxPerms;
@@ -29,6 +30,7 @@ public abstract class Command {
         this.plugin = plugin;
         this.auxPerms = new ArrayList<Permission>();
         this.commandKeys = new ArrayList<String>();
+        this.examples = new ArrayList<String>();
     }
 
     public List<String> getKeys() {
@@ -184,7 +186,7 @@ public abstract class Command {
     }
 
     public void addCommandExample(String example) {
-        this.commandExample = example;
+        this.examples.add(example);
     }
 
     public void setCommandUsage(String usage) {
@@ -239,5 +241,9 @@ public abstract class Command {
             permStrings.add(p.getName());
         }
         return permStrings;
+    }
+
+    public List<String> getExamples() {
+        return this.examples;
     }
 }
