@@ -44,27 +44,56 @@ public class CommandHandler {
 
     public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
         List<String> parsedArgs = parseAllQuotedStrings(args);
-        CmdKey key = null;
-        boolean commandExecuted = false;
+        String key = null;
 
         Iterator<Command> iterator = this.allCommands.iterator();
         Command foundCommand = null;
-        while (iterator.hasNext() && !commandExecuted) {
+        // Initialize a list of all commands that match:
+        List<Command> foundCommands = new ArrayList<Command>();
+        List<String> foundKeys = new ArrayList<String>();
+
+        while (iterator.hasNext()) {
             foundCommand = iterator.next();
             key = foundCommand.getKey(parsedArgs);
             if (key != null) {
-                // This method, removeKeyArgs mutates parsedArgs
-                foundCommand.removeKeyArgs(parsedArgs, key.getKey());
-                // Special case:
-                // If the ONLY param is a '?' show them the usage.
-                if (parsedArgs.size() == 1 && parsedArgs.get(0).equals("?")) {
-                    this.showHelp(sender, foundCommand);
-                } else if(key.hasValidNumberOfArgs(parsedArgs.size())) {
-                    checkAndRunCommand(sender, parsedArgs, foundCommand);
-                }
+                foundCommands.add(foundCommand);
+                foundKeys.add(key);
             }
         }
+        processFoundCommands(foundCommands, foundKeys, sender, parsedArgs);
         return true;
+    }
+
+    /**
+     * The purpose of this method is to determine the most specific command matching the args and execute it.
+     * 
+     * @param foundCommands A list of all matching commands.
+     * @param foundKeys A list of the key that was matched the command.
+     * @param parsedArgs The arguments who have been combined, ie: "The world" is one argument
+     * @param parsedArgs
+     */
+    private void processFoundCommands(List<Command> foundCommands, List<String> foundKeys, CommandSender sender, List<String> parsedArgs) {
+
+        Command bestMatch = null;
+        String matchingKey = null;
+        int bestMatchInt = -1;
+
+        for (int i = 0; i < foundCommands.size(); i++) {
+            if (foundCommands.get(i).getNumKeyArgs(foundKeys.get(i)) > bestMatchInt) {
+                bestMatch = foundCommands.get(i);
+                matchingKey = foundKeys.get(i);
+            }
+        }
+        if (bestMatch != null) {
+            bestMatch.removeKeyArgs(parsedArgs, matchingKey);
+            // Special case:
+            // If the ONLY param is a '?' show them the usage.
+            if (parsedArgs.size() == 1 && parsedArgs.get(0).equals("?") && this.permissions.hasAnyPermission(sender, bestMatch.getAllPermissionStrings(), bestMatch.isOpRequired())) {
+                this.showHelp(sender, bestMatch);
+            } else {
+                checkAndRunCommand(sender, parsedArgs, bestMatch);
+            }
+        }
     }
 
     public void registerCommand(Command command) {
@@ -108,7 +137,7 @@ public class CommandHandler {
         } else {
             message = message.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
         }
-        
+
         if (message2 == null) {
             message = "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE;
         } else {
@@ -190,15 +219,17 @@ public class CommandHandler {
     }
 
     private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand) {
-        if (foundCommand.checkArgLength(parsedArgs)) {
-            // Or used so if someone doesn't implement permissions interface, all commands will run.
-            if (this.permissions != null && this.permissions.hasPermission(sender, foundCommand.getPermissionString(), foundCommand.isOpRequired())) {
+        if (this.permissions.hasAnyPermission(sender, foundCommand.getAllPermissionStrings(), foundCommand.isOpRequired())) {
+            if (foundCommand.checkArgLength(parsedArgs)) {
                 foundCommand.runCommand(sender, parsedArgs);
             } else {
-                sender.sendMessage("You do not have the required permission (" + foundCommand.getPermissionString() + ").");
+                showHelp(sender, foundCommand);
             }
         } else {
-            showHelp(sender, foundCommand);
+            sender.sendMessage("You do not have any of the required permission(s):");
+            for(String perm : foundCommand.getAllPermissionStrings()) {
+                sender.sendMessage(" - " + ChatColor.GREEN + perm);    
+            }
         }
     }
 
@@ -208,8 +239,8 @@ public class CommandHandler {
         sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.getCommandUsage());
         sender.sendMessage(ChatColor.GREEN + foundCommand.getPermissionString());
         String keys = "";
-        for (CmdKey key : foundCommand.getKeys()) {
-            keys += key.getKey() + ", ";
+        for (String key : foundCommand.getKeys()) {
+            keys += key + ", ";
         }
         keys = keys.substring(0, keys.length() - 2);
         sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.DARK_RED + keys);

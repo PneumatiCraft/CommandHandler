@@ -13,9 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public abstract class Command {
     private JavaPlugin plugin;
 
-    private String permissionString;
-    private boolean opRequired;
-
     private int minimumArgLength;
     private int maximumArgLength;
 
@@ -23,17 +20,18 @@ public abstract class Command {
     private String commandExample;
     private String commandUsage;
 
-    private List<CmdKey> commandKeys;
+    private List<String> commandKeys;
 
     private Permission permission;
+    private List<Permission> auxPerms;
 
     public Command(JavaPlugin plugin) {
         this.plugin = plugin;
-
-        this.commandKeys = new ArrayList<CmdKey>();
+        this.auxPerms = new ArrayList<Permission>();
+        this.commandKeys = new ArrayList<String>();
     }
-    
-    public List<CmdKey> getKeys() {
+
+    public List<String> getKeys() {
         return this.commandKeys;
     }
 
@@ -49,7 +47,10 @@ public abstract class Command {
         for (String s : args) {
             returnString += s + " ";
         }
-        return returnString.substring(0, returnString.length() - 1);
+        if (returnString.length() > 0) {
+            return returnString.substring(0, returnString.length() - 1);
+        }
+        return "";
     }
 
     /**
@@ -58,16 +59,23 @@ public abstract class Command {
      * @param otherPerm The Permission to add.
      */
     public void addAdditonalPermission(Permission otherPerm) {
-        this.plugin.getServer().getPluginManager().addPermission(otherPerm);
-        this.addToParentPerms(otherPerm.getName());
+        if (this.plugin.getServer().getPluginManager().getPermission(otherPerm.getName()) == null) {
+            this.plugin.getServer().getPluginManager().addPermission(otherPerm);
+            this.addToParentPerms(otherPerm.getName());
+        }
+        this.auxPerms.add(otherPerm);
     }
 
-    public CmdKey getKey(List<String> parsedArgs) {
+    public String getKey(List<String> parsedArgs) {
         // Combines our args to a space separated string
         String argsString = this.getArgsString(parsedArgs);
+        System.out.print("Getting the keylist");
+        System.out.print(argsString);
+        System.out.print(this.commandKeys);
 
-        for (CmdKey key : this.commandKeys) {
-            String identifier = key.getKey().toLowerCase();
+        for (String key : this.commandKeys) {
+            String identifier = key.toLowerCase();
+
             if (argsString.matches(identifier + "(\\s+.*|\\s*)")) {
                 return key;
             }
@@ -85,8 +93,13 @@ public abstract class Command {
         return args;
     }
 
+    public int getNumKeyArgs(String key) {
+        int identifierLength = key.split(" ").length;
+        return identifierLength;
+    }
+
     public String getPermissionString() {
-        return this.permissionString;
+        return this.permission.getName();
     }
 
     public Permission getPermission() {
@@ -98,11 +111,9 @@ public abstract class Command {
     }
 
     public void setPermission(Permission perm) {
-        this.opRequired = (perm.getDefault() == PermissionDefault.OP);
-        this.permissionString = perm.getName();
         this.permission = perm;
         this.plugin.getServer().getPluginManager().addPermission(this.permission);
-        this.addToParentPerms(this.permissionString);
+        this.addToParentPerms(this.permission.getName());
     }
 
     private void addToParentPerms(String permString) {
@@ -153,7 +164,7 @@ public abstract class Command {
     }
 
     public boolean isOpRequired() {
-        return this.opRequired;
+        return this.permission.getDefault() == PermissionDefault.OP;
     }
 
     public String getCommandName() {
@@ -172,7 +183,7 @@ public abstract class Command {
         return this.commandUsage;
     }
 
-    public void setCommandExample(String example) {
+    public void addCommandExample(String example) {
         this.commandExample = example;
     }
 
@@ -190,27 +201,22 @@ public abstract class Command {
     }
 
     public void addKey(String key) {
-        this.commandKeys.add(new CmdKey(key, this));
-        Collections.sort(this.commandKeys, new ReverseLengthSorter());
-    }
-    
-    public void addKey(String key, int minArgs, int maxArgs) {
-        this.commandKeys.add(new CmdKey(key, this, minArgs, maxArgs));
+        this.commandKeys.add(key);
         Collections.sort(this.commandKeys, new ReverseLengthSorter());
     }
 
     /**
      * @return the plugin
      */
-    public JavaPlugin getPlugin() {
+    protected JavaPlugin getPlugin() {
         return this.plugin;
     }
 
-    private class ReverseLengthSorter implements Comparator<CmdKey> {
-        public int compare(CmdKey cmdA, CmdKey cmdB) {
-            if (cmdA.getKey().length() > cmdB.getKey().length()) {
+    private class ReverseLengthSorter implements Comparator<String> {
+        public int compare(String cmdA, String cmdB) {
+            if (cmdA.length() > cmdB.length()) {
                 return -1;
-            } else if (cmdA.getKey().length() < cmdB.getKey().length()) {
+            } else if (cmdA.length() < cmdB.length()) {
                 return 1;
             } else {
                 return 0;
@@ -224,5 +230,14 @@ public abstract class Command {
 
     public Integer getMinArgs() {
         return this.minimumArgLength;
+    }
+
+    public List<String> getAllPermissionStrings() {
+        List<String> permStrings = new ArrayList<String>();
+        permStrings.add(this.permission.getName());
+        for(Permission p : this.auxPerms) {
+            permStrings.add(p.getName());
+        }
+        return permStrings;
     }
 }
