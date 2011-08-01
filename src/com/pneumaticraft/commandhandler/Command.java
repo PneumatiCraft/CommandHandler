@@ -11,7 +11,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class Command {
-    private JavaPlugin plugin;
+    protected JavaPlugin plugin;
 
     private int minimumArgLength;
     private int maximumArgLength;
