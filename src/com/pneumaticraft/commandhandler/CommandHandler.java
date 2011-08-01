@@ -139,7 +139,7 @@ public class CommandHandler {
         }
 
         if (message2 == null) {
-            message = "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE;
+            message2 = "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE;
         } else {
             message2 = message2.replace("{CMD}", ChatColor.RED + commandName + ChatColor.WHITE);
         }
