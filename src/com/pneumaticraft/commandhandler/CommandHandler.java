@@ -44,13 +44,13 @@ public class CommandHandler {
 
     public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
         List<String> parsedArgs = parseAllQuotedStrings(args);
-        String key = null;
+        CommandKey key = null;
 
         Iterator<Command> iterator = this.allCommands.iterator();
         Command foundCommand = null;
         // Initialize a list of all commands that match:
         List<Command> foundCommands = new ArrayList<Command>();
-        List<String> foundKeys = new ArrayList<String>();
+        List<CommandKey> foundKeys = new ArrayList<CommandKey>();
 
         while (iterator.hasNext()) {
             foundCommand = iterator.next();
@@ -72,20 +72,31 @@ public class CommandHandler {
      * @param parsedArgs The arguments who have been combined, ie: "The world" is one argument
      * @param parsedArgs
      */
-    private void processFoundCommands(List<Command> foundCommands, List<String> foundKeys, CommandSender sender, List<String> parsedArgs) {
+    private void processFoundCommands(List<Command> foundCommands, List<CommandKey> foundKeys, CommandSender sender, List<String> parsedArgs) {
 
-        Command bestMatch = null;
-        String matchingKey = null;
-        int bestMatchInt = -1;
+        if (foundCommands.size() == 0) {
+            return;
+        }
+        Command bestMatch = foundCommands.get(0);
+        CommandKey matchingKey = foundKeys.get(0);
+        int bestMatchInt = 0;
 
-        for (int i = 0; i < foundCommands.size(); i++) {
-            if (foundCommands.get(i).getNumKeyArgs(foundKeys.get(i)) > bestMatchInt) {
+        for (int i = 1; i < foundCommands.size(); i++) {
+            List<String> parsedCopy = new ArrayList<String>(parsedArgs);
+            foundCommands.get(i).removeKeyArgs(parsedCopy, foundKeys.get(i).getKey());
+            if (foundCommands.get(i).getNumKeyArgs(foundKeys.get(i).getKey()) > bestMatchInt) {
+                bestMatch = foundCommands.get(i);
+                matchingKey = foundKeys.get(i);
+            } else if (foundCommands.get(i).getNumKeyArgs(foundKeys.get(i).getKey()) == bestMatchInt && (foundKeys.get(i).hasValidNumberOfArgs(parsedCopy.size()))) {
+                // If the number of matched items was the same as a previous one
+                // AND the new one has a valid number of args, it will be accepted 
+                // and will replace the previous one as the best command.
                 bestMatch = foundCommands.get(i);
                 matchingKey = foundKeys.get(i);
             }
         }
         if (bestMatch != null) {
-            bestMatch.removeKeyArgs(parsedArgs, matchingKey);
+            bestMatch.removeKeyArgs(parsedArgs, matchingKey.getKey());
             // Special case:
             // If the ONLY param is a '?' show them the usage.
             if (parsedArgs.size() == 1 && parsedArgs.get(0).equals("?") && this.permissions.hasAnyPermission(sender, bestMatch.getAllPermissionStrings(), bestMatch.isOpRequired())) {
@@ -246,7 +257,7 @@ public class CommandHandler {
         sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.DARK_RED + keys);
         if (foundCommand.getCommandExamples().size() > 0) {
             sender.sendMessage(ChatColor.YELLOW + "Examples:");
-            for(String ex : foundCommand.getCommandExamples()) {
+            for (String ex : foundCommand.getCommandExamples()) {
                 sender.sendMessage(ex);
             }
         }

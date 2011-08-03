@@ -75,7 +75,7 @@ public abstract class Command {
         this.auxPerms.add(otherPerm);
     }
 
-    public String getKey(List<String> parsedArgs) {
+    public CommandKey getKey(List<String> parsedArgs) {
         // Combines our args to a space separated string
         String argsString = this.getArgsString(parsedArgs);
 
@@ -84,12 +84,7 @@ public abstract class Command {
 
             // If we match AND we match the number of args.
             if (argsString.matches(identifier + "(\\s+.*|\\s*)")) {
-                // Remove the other Junk in a copy so we don't mess with our master list:
-                List<String> parsedCopy = new ArrayList<String>(parsedArgs);
-                this.removeKeyArgs(parsedCopy, identifier);
-                if (ck.hasValidNumberOfArgs(parsedCopy.size())) {
-                    return ck.getKey();
-                }
+                return ck;
             }
         }
         return null;

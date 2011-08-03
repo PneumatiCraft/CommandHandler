@@ -10,7 +10,7 @@ public class CommandKey {
         this.key = key;
         this.cmd = cmd;
     }
-    
+
     public CommandKey(String key, Command cmd, int minArgs, int maxArgs) {
         this(key, cmd);
         this.minArgs = minArgs;
@@ -36,5 +36,10 @@ public class CommandKey {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + this.key + "(" + this.minArgs + ", " + this.maxArgs + ")" + "]";
     }
 }
