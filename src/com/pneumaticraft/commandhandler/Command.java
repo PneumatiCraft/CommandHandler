@@ -34,12 +34,12 @@ public abstract class Command {
 
     public List<String> getKeyStrings() {
         List<String> returnList = new ArrayList<String>();
-        for(CommandKey ck : this.commandKeys) {
+        for (CommandKey ck : this.commandKeys) {
             returnList.add(ck.getKey());
         }
         return returnList;
     }
-    
+
     public List<CommandKey> getKeys() {
         return this.commandKeys;
     }
@@ -81,9 +81,15 @@ public abstract class Command {
 
         for (CommandKey ck : this.commandKeys) {
             String identifier = ck.getKey().toLowerCase();
+
             // If we match AND we match the number of args.
-            if (argsString.matches(identifier + "(\\s+.*|\\s*)") && ck.hasValidNumberOfArgs(parsedArgs.size())) {
-                return ck.getKey();
+            if (argsString.matches(identifier + "(\\s+.*|\\s*)")) {
+                // Remove the other Junk in a copy so we don't mess with our master list:
+                List<String> parsedCopy = new ArrayList<String>(parsedArgs);
+                this.removeKeyArgs(parsedCopy, identifier);
+                if (ck.hasValidNumberOfArgs(parsedCopy.size())) {
+                    return ck.getKey();
+                }
             }
         }
         return null;
@@ -210,7 +216,7 @@ public abstract class Command {
         this.commandKeys.add(new CommandKey(key, this));
         Collections.sort(this.commandKeys, new ReverseLengthSorter());
     }
-    
+
     public void addKey(String key, int minArgs, int maxArgs) {
         this.commandKeys.add(new CommandKey(key, this, minArgs, maxArgs));
         Collections.sort(this.commandKeys, new ReverseLengthSorter());
@@ -246,7 +252,7 @@ public abstract class Command {
     public List<String> getAllPermissionStrings() {
         List<String> permStrings = new ArrayList<String>();
         permStrings.add(this.permission.getName());
-        for(Permission p : this.auxPerms) {
+        for (Permission p : this.auxPerms) {
             permStrings.add(p.getName());
         }
         return permStrings;
