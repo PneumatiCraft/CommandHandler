@@ -61,6 +61,7 @@ public class CommandHandler {
                 foundKeys.add(key);
             }
         }
+        
         processFoundCommands(foundCommands, foundKeys, sender, parsedArgs);
         return true;
     }
@@ -78,16 +79,18 @@ public class CommandHandler {
         if (foundCommands.size() == 0) {
             return;
         }
-        Command bestMatch = foundCommands.get(0);
-        CommandKey matchingKey = foundKeys.get(0);
+        Command bestMatch = null;
+        CommandKey matchingKey = null;
         int bestMatchInt = 0;
-
-        for (int i = 1; i < foundCommands.size(); i++) {
+        
+        for (int i = 0; i < foundCommands.size(); i++) {
             List<String> parsedCopy = new ArrayList<String>(parsedArgs);
             foundCommands.get(i).removeKeyArgs(parsedCopy, foundKeys.get(i).getKey());
+            
             if (foundCommands.get(i).getNumKeyArgs(foundKeys.get(i).getKey()) > bestMatchInt) {
                 bestMatch = foundCommands.get(i);
                 matchingKey = foundKeys.get(i);
+                bestMatchInt = bestMatch.getNumKeyArgs(matchingKey.getKey());
             } else if (foundCommands.get(i).getNumKeyArgs(foundKeys.get(i).getKey()) == bestMatchInt && (foundKeys.get(i).hasValidNumberOfArgs(parsedCopy.size()))) {
                 // If the number of matched items was the same as a previous one
                 // AND the new one has a valid number of args, it will be accepted 
@@ -96,6 +99,7 @@ public class CommandHandler {
                 matchingKey = foundKeys.get(i);
             }
         }
+        
         if (bestMatch != null) {
             bestMatch.removeKeyArgs(parsedArgs, matchingKey.getKey());
             // Special case:
