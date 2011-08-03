@@ -239,14 +239,14 @@ public class CommandHandler {
         sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.getCommandUsage());
         sender.sendMessage(ChatColor.GREEN + foundCommand.getPermissionString());
         String keys = "";
-        for (String key : foundCommand.getKeys()) {
+        for (String key : foundCommand.getKeyStrings()) {
             keys += key + ", ";
         }
         keys = keys.substring(0, keys.length() - 2);
         sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.DARK_RED + keys);
-        if (foundCommand.getExamples().size() > 0) {
+        if (foundCommand.getCommandExamples().size() > 0) {
             sender.sendMessage(ChatColor.YELLOW + "Examples:");
-            for(String ex : foundCommand.getExamples()) {
+            for(String ex : foundCommand.getCommandExamples()) {
                 sender.sendMessage(ex);
             }
         }

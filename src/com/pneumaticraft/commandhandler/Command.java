@@ -17,10 +17,9 @@ public abstract class Command {
     private int maximumArgLength;
 
     private String commandName;
-    private String commandExample;
     private String commandUsage;
 
-    private List<String> commandKeys;
+    private List<CommandKey> commandKeys;
     private List<String> examples;
 
     private Permission permission;
@@ -29,11 +28,19 @@ public abstract class Command {
     public Command(JavaPlugin plugin) {
         this.plugin = plugin;
         this.auxPerms = new ArrayList<Permission>();
-        this.commandKeys = new ArrayList<String>();
+        this.commandKeys = new ArrayList<CommandKey>();
         this.examples = new ArrayList<String>();
     }
 
-    public List<String> getKeys() {
+    public List<String> getKeyStrings() {
+        List<String> returnList = new ArrayList<String>();
+        for(CommandKey ck : this.commandKeys) {
+            returnList.add(ck.getKey());
+        }
+        return returnList;
+    }
+    
+    public List<CommandKey> getKeys() {
         return this.commandKeys;
     }
 
@@ -72,11 +79,11 @@ public abstract class Command {
         // Combines our args to a space separated string
         String argsString = this.getArgsString(parsedArgs);
 
-        for (String key : this.commandKeys) {
-            String identifier = key.toLowerCase();
-
-            if (argsString.matches(identifier + "(\\s+.*|\\s*)")) {
-                return key;
+        for (CommandKey ck : this.commandKeys) {
+            String identifier = ck.getKey().toLowerCase();
+            // If we match AND we match the number of args.
+            if (argsString.matches(identifier + "(\\s+.*|\\s*)") && ck.hasValidNumberOfArgs(parsedArgs.size())) {
+                return ck.getKey();
             }
         }
         return null;
@@ -174,8 +181,8 @@ public abstract class Command {
         return this.permission.getDescription();
     }
 
-    public String getCommandExample() {
-        return this.commandExample;
+    public List<String> getCommandExamples() {
+        return this.examples;
     }
 
     public String getCommandUsage() {
@@ -200,7 +207,12 @@ public abstract class Command {
     }
 
     public void addKey(String key) {
-        this.commandKeys.add(key);
+        this.commandKeys.add(new CommandKey(key, this));
+        Collections.sort(this.commandKeys, new ReverseLengthSorter());
+    }
+    
+    public void addKey(String key, int minArgs, int maxArgs) {
+        this.commandKeys.add(new CommandKey(key, this, minArgs, maxArgs));
         Collections.sort(this.commandKeys, new ReverseLengthSorter());
     }
 
@@ -211,11 +223,11 @@ public abstract class Command {
         return this.plugin;
     }
 
-    private class ReverseLengthSorter implements Comparator<String> {
-        public int compare(String cmdA, String cmdB) {
-            if (cmdA.length() > cmdB.length()) {
+    private class ReverseLengthSorter implements Comparator<CommandKey> {
+        public int compare(CommandKey cmdA, CommandKey cmdB) {
+            if (cmdA.getKey().length() > cmdB.getKey().length()) {
                 return -1;
-            } else if (cmdA.length() < cmdB.length()) {
+            } else if (cmdA.getKey().length() < cmdB.getKey().length()) {
                 return 1;
             } else {
                 return 0;
@@ -238,9 +250,5 @@ public abstract class Command {
             permStrings.add(p.getName());
         }
         return permStrings;
-    }
-
-    public List<String> getExamples() {
-        return this.examples;
     }
 }
