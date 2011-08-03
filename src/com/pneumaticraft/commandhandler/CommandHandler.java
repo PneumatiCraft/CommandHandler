@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.lithium3141.shellparser.ShellParser;
@@ -245,20 +246,26 @@ public class CommandHandler {
     }
 
     private void showHelp(CommandSender sender, Command foundCommand) {
-        sender.sendMessage(ChatColor.AQUA + foundCommand.getCommandName());
-        sender.sendMessage(ChatColor.GOLD + foundCommand.getCommandDesc());
+        sender.sendMessage(ChatColor.AQUA + "--- " + foundCommand.getCommandName() + " ---");
+        sender.sendMessage(ChatColor.YELLOW + foundCommand.getCommandDesc());
         sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.getCommandUsage());
-        sender.sendMessage(ChatColor.GREEN + foundCommand.getPermissionString());
+        sender.sendMessage("Permission: " + ChatColor.GREEN + foundCommand.getPermissionString());
         String keys = "";
         for (String key : foundCommand.getKeyStrings()) {
             keys += key + ", ";
         }
         keys = keys.substring(0, keys.length() - 2);
-        sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.DARK_RED + keys);
+        sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.RED + keys);
         if (foundCommand.getCommandExamples().size() > 0) {
-            sender.sendMessage(ChatColor.YELLOW + "Examples:");
-            for (String ex : foundCommand.getCommandExamples()) {
-                sender.sendMessage(ex);
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Examples:");
+            if (sender instanceof Player) {
+                for (int i = 0; i < 4 && i < foundCommand.getCommandExamples().size(); i++) {
+                    sender.sendMessage(foundCommand.getCommandExamples().get(i));
+                }
+            } else {
+                for (String c : foundCommand.getCommandExamples()) {
+                    sender.sendMessage(c);
+                }
             }
         }
     }
