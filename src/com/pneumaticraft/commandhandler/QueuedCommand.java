@@ -42,6 +42,7 @@ public class QueuedCommand {
                 Object[] listAsArray = this.args.toArray(new Object[this.args.size()]);
                 method.invoke(this.plugin, listAsArray);
             } catch (Exception e) {
+                System.out.print(e.getMessage());
                 return false;
             }
             return true;
