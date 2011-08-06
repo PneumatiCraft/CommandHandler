@@ -2,7 +2,6 @@ package com.pneumaticraft.commandhandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -222,18 +221,6 @@ public abstract class Command {
      */
     protected JavaPlugin getPlugin() {
         return this.plugin;
-    }
-
-    private class ReverseLengthSorter implements Comparator<CommandKey> {
-        public int compare(CommandKey cmdA, CommandKey cmdB) {
-            if (cmdA.getKey().length() > cmdB.getKey().length()) {
-                return -1;
-            } else if (cmdA.getKey().length() < cmdB.getKey().length()) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
     }
 
     public Integer getMaxArgs() {
