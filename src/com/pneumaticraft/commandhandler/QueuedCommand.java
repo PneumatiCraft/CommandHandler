@@ -40,12 +40,15 @@ public class QueuedCommand {
             try {
                 Method method = this.plugin.getClass().getMethod(this.name, this.paramTypes);
                 Object[] listAsArray = this.args.toArray(new Object[this.args.size()]);
-                method.invoke(this.plugin, listAsArray);
+                Object returnVal = method.invoke(this.plugin, listAsArray);
+                if (returnVal instanceof Boolean) {
+                    return (Boolean) returnVal;
+                } else {
+                    return true;
+                }
             } catch (Exception e) {
                 System.out.print(e.getMessage());
-                return false;
             }
-            return true;
         } else {
             this.sender.sendMessage("This command has expired. Please type the original command again.");
         }
