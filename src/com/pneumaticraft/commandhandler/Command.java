@@ -128,6 +128,8 @@ public abstract class Command {
         String[] seperated = permStringChopped.split("\\.");
         String parentPermString = getParentPerm(seperated);
         if (parentPermString == null) {
+            addToRootPermission("*",permStringChopped);
+            addToRootPermission("*.*",permStringChopped);
             return;
         }
         Permission parentPermission = this.plugin.getServer().getPluginManager().getPermission(parentPermString);
@@ -150,6 +152,16 @@ public abstract class Command {
             parentPermission.getChildren().put(actualPermission.getName(), true);
             this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(parentPermission);
         }
+    }
+
+    private void addToRootPermission(String rootPerm, String permStringChopped) {
+        Permission rootPermission = this.plugin.getServer().getPluginManager().getPermission(rootPerm);
+        if (rootPermission == null) {
+            rootPermission = new Permission(rootPerm);
+            this.plugin.getServer().getPluginManager().addPermission(rootPermission);
+        }
+        rootPermission.getChildren().put(permStringChopped + ".*", true);
+        this.plugin.getServer().getPluginManager().recalculatePermissionDefaults(rootPermission);
     }
 
     /**
