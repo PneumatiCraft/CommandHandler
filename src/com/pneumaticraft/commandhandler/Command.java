@@ -118,8 +118,11 @@ public abstract class Command {
 
     public void setPermission(Permission perm) {
         this.permission = perm;
-        this.plugin.getServer().getPluginManager().addPermission(this.permission);
-        this.addToParentPerms(this.permission.getName());
+        try {
+            this.plugin.getServer().getPluginManager().addPermission(this.permission);
+            this.addToParentPerms(this.permission.getName());
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     private void addToParentPerms(String permString) {
@@ -128,8 +131,8 @@ public abstract class Command {
         String[] seperated = permStringChopped.split("\\.");
         String parentPermString = getParentPerm(seperated);
         if (parentPermString == null) {
-            addToRootPermission("*",permStringChopped);
-            addToRootPermission("*.*",permStringChopped);
+            addToRootPermission("*", permStringChopped);
+            addToRootPermission("*.*", permStringChopped);
             return;
         }
         Permission parentPermission = this.plugin.getServer().getPluginManager().getPermission(parentPermString);
