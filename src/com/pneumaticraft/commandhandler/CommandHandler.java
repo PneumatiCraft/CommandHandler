@@ -20,6 +20,7 @@ public class CommandHandler {
     protected List<Command> allCommands;
 
     protected PermissionsInterface permissions;
+    private double version = 1;
 
     public CommandHandler(JavaPlugin plugin, PermissionsInterface permissions) {
         this.plugin = plugin;
@@ -27,6 +28,10 @@ public class CommandHandler {
         this.allCommands = new ArrayList<Command>();
         this.queuedCommands = new ArrayList<QueuedCommand>();
         this.permissions = permissions;
+    }
+    
+    public double getVersion() {
+        return this.version;
     }
 
     public List<Command> getCommands(CommandSender sender) {
