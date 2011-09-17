@@ -20,7 +20,7 @@ public class CommandHandler {
     protected List<Command> allCommands;
 
     protected PermissionsInterface permissions;
-    private double version = 1;
+    private double version = 2;
 
     public CommandHandler(JavaPlugin plugin, PermissionsInterface permissions) {
         this.plugin = plugin;
@@ -29,7 +29,7 @@ public class CommandHandler {
         this.queuedCommands = new ArrayList<QueuedCommand>();
         this.permissions = permissions;
     }
-    
+
     public double getVersion() {
         return this.version;
     }
@@ -37,7 +37,7 @@ public class CommandHandler {
     public List<Command> getCommands(CommandSender sender) {
         List<Command> permissiveCommands = new ArrayList<Command>();
         for (Command c : this.allCommands) {
-            if (this.permissions.hasPermission(sender, c.getPermissionString(), c.isOpRequired())) {
+            if (this.permissions.hasAnyPermission(sender, c.getAllPermissionStrings(), c.isOpRequired())) {
                 permissiveCommands.add(c);
             }
         }
@@ -66,14 +66,14 @@ public class CommandHandler {
                 foundKeys.add(key);
             }
         }
-        
+
         processFoundCommands(foundCommands, foundKeys, sender, parsedArgs);
         return true;
     }
 
     /**
      * The purpose of this method is to determine the most specific command matching the args and execute it.
-     * 
+     *
      * @param foundCommands A list of all matching commands.
      * @param foundKeys A list of the key that was matched the command.
      * @param parsedArgs The arguments who have been combined, ie: "The world" is one argument
@@ -87,24 +87,24 @@ public class CommandHandler {
         Command bestMatch = null;
         CommandKey matchingKey = null;
         int bestMatchInt = 0;
-        
+
         for (int i = 0; i < foundCommands.size(); i++) {
             List<String> parsedCopy = new ArrayList<String>(parsedArgs);
             foundCommands.get(i).removeKeyArgs(parsedCopy, foundKeys.get(i).getKey());
-            
+
             if (foundCommands.get(i).getNumKeyArgs(foundKeys.get(i).getKey()) > bestMatchInt) {
                 bestMatch = foundCommands.get(i);
                 matchingKey = foundKeys.get(i);
                 bestMatchInt = bestMatch.getNumKeyArgs(matchingKey.getKey());
             } else if (foundCommands.get(i).getNumKeyArgs(foundKeys.get(i).getKey()) == bestMatchInt && (foundKeys.get(i).hasValidNumberOfArgs(parsedCopy.size()))) {
                 // If the number of matched items was the same as a previous one
-                // AND the new one has a valid number of args, it will be accepted 
+                // AND the new one has a valid number of args, it will be accepted
                 // and will replace the previous one as the best command.
                 bestMatch = foundCommands.get(i);
                 matchingKey = foundKeys.get(i);
             }
         }
-        
+
         if (bestMatch != null) {
             bestMatch.removeKeyArgs(parsedArgs, matchingKey.getKey());
             // Special case:
@@ -123,7 +123,7 @@ public class CommandHandler {
 
     /**
      * Combines all quoted strings
-     * 
+     *
      * @param args
      * @return
      */
@@ -177,7 +177,7 @@ public class CommandHandler {
 
     /**
      * Tries to fire off the command
-     * 
+     *
      * @param sender
      * @return
      */
@@ -202,7 +202,7 @@ public class CommandHandler {
 
     /**
      * Cancels(invalidates) a command that has been requested. This is called when a user types something other than 'yes' or when they try to queue a second command Queuing a second command will delete the first command entirely.
-     * 
+     *
      * @param sender
      */
     public void cancelQueuedCommand(CommandSender sender) {
@@ -220,7 +220,7 @@ public class CommandHandler {
 
     /**
      * Returns the given flag value
-     * 
+     *
      * @param flag A param flag, like -s or -g
      * @param args All arguments to search through
      * @return A string or null
