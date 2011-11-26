@@ -17,6 +17,7 @@ public class QueuedCommand {
     private String success;
     private String fail;
     private int expiration;
+    private boolean alreadyRun;
 
     public QueuedCommand(String commandName, List<? extends Object> args, Class<?> partypes[], CommandSender sender, Calendar instance, JavaPlugin plugin, String success, String fail, int expiration) {
         this.plugin = plugin;
@@ -37,7 +38,12 @@ public class QueuedCommand {
     public boolean execute() {
         this.timeRequested.add(Calendar.SECOND, this.expiration);
         if (this.timeRequested.after(Calendar.getInstance())) {
+            if(alreadyRun) {
+                this.sender.sendMessage("This command has already been run! Please type the original command again if you want to rerun it.");
+                return false;
+            }
             try {
+                this.alreadyRun = true;
                 Method method = this.plugin.getClass().getMethod(this.name, this.paramTypes);
                 Object[] listAsArray = this.args.toArray(new Object[this.args.size()]);
                 Object returnVal = method.invoke(this.plugin, listAsArray);
