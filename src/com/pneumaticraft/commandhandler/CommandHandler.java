@@ -1,16 +1,15 @@
 package com.pneumaticraft.commandhandler;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
-
+import com.lithium3141.shellparser.ShellParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.lithium3141.shellparser.ShellParser;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
 
 public class CommandHandler {
 
@@ -48,6 +47,7 @@ public class CommandHandler {
         return this.allCommands;
     }
 
+
     public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
         List<String> parsedArgs = parseAllQuotedStrings(args);
         CommandKey key = null;
@@ -75,8 +75,8 @@ public class CommandHandler {
      * The purpose of this method is to determine the most specific command matching the args and execute it.
      *
      * @param foundCommands A list of all matching commands.
-     * @param foundKeys A list of the key that was matched the command.
-     * @param parsedArgs The arguments who have been combined, ie: "The world" is one argument
+     * @param foundKeys     A list of the key that was matched the command.
+     * @param parsedArgs    The arguments who have been combined, ie: "The world" is one argument
      * @param parsedArgs
      */
     private void processFoundCommands(List<Command> foundCommands, List<CommandKey> foundKeys, CommandSender sender, List<String> parsedArgs) {
@@ -125,6 +125,7 @@ public class CommandHandler {
      * Combines all quoted strings
      *
      * @param args
+     *
      * @return
      */
     private List<String> parseAllQuotedStrings(List<String> args) {
@@ -147,7 +148,8 @@ public class CommandHandler {
     }
 
     /**
-     * "The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could break something!" "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE
+     * "The command " + ChatColor.RED + commandName + ChatColor.WHITE + " has been halted due to the fact that it could
+     * break something!" "If you still wish to execute " + ChatColor.RED + commandName + ChatColor.WHITE
      */
     public void queueCommand(CommandSender sender, String commandName, String methodName, List<? extends Object> args, Class<?>[] paramTypes, String message, String message2, String success, String fail, int seconds) {
         cancelQueuedCommand(sender);
@@ -179,6 +181,7 @@ public class CommandHandler {
      * Tries to fire off the command
      *
      * @param sender
+     *
      * @return
      */
     public boolean confirmQueuedCommand(CommandSender sender) {
@@ -201,7 +204,9 @@ public class CommandHandler {
     }
 
     /**
-     * Cancels(invalidates) a command that has been requested. This is called when a user types something other than 'yes' or when they try to queue a second command Queuing a second command will delete the first command entirely.
+     * Cancels(invalidates) a command that has been requested. This is called when a user types something other than
+     * 'yes' or when they try to queue a second command Queuing a second command will delete the first command
+     * entirely.
      *
      * @param sender
      */
@@ -223,6 +228,7 @@ public class CommandHandler {
      *
      * @param flag A param flag, like -s or -g
      * @param args All arguments to search through
+     *
      * @return A string or null
      */
     public static String getFlag(String flag, List<String> args) {

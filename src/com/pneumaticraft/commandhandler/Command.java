@@ -1,13 +1,13 @@
 package com.pneumaticraft.commandhandler;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class Command {
     protected JavaPlugin plugin;
@@ -63,7 +63,7 @@ public abstract class Command {
 
     /**
      * This method is provided as a convenience to add additional permissions recursively to all nodes
-     * 
+     *
      * @param otherPerm The Permission to add.
      */
     public void addAdditonalPermission(Permission otherPerm) {
@@ -169,8 +169,9 @@ public abstract class Command {
 
     /**
      * If the given permission was 'multiverse.core.tp.self', this would return 'multiverse.core.tp.*'.
-     * 
+     *
      * @param seperated
+     *
      * @return
      */
     private String getParentPerm(String[] seperated) {
@@ -231,9 +232,7 @@ public abstract class Command {
         Collections.sort(this.commandKeys, new ReverseLengthSorter());
     }
 
-    /**
-     * @return the plugin
-     */
+    /** @return the plugin */
     protected JavaPlugin getPlugin() {
         return this.plugin;
     }

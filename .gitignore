@@ -4,3 +4,4 @@
 bin
 lib/*.jar
 .idea/
+*.iml
