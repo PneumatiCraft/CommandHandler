@@ -1,6 +1,8 @@
 package com.pneumaticraft.commandhandler;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -253,4 +255,28 @@ public abstract class Command {
         }
         return permStrings;
     }
+    public void showHelp(CommandSender sender) {
+            sender.sendMessage(ChatColor.AQUA + "--- " + this.getCommandName() + " ---");
+            sender.sendMessage(ChatColor.YELLOW + this.getCommandDesc());
+            sender.sendMessage(ChatColor.DARK_AQUA + this.getCommandUsage());
+            sender.sendMessage("Permission: " + ChatColor.GREEN + this.getPermissionString());
+            String keys = "";
+            for (String key : this.getKeyStrings()) {
+                keys += key + ", ";
+            }
+            keys = keys.substring(0, keys.length() - 2);
+            sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.RED + keys);
+            if (this.getCommandExamples().size() > 0) {
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "Examples:");
+                if (sender instanceof Player) {
+                    for (int i = 0; i < 4 && i < this.getCommandExamples().size(); i++) {
+                        sender.sendMessage(this.getCommandExamples().get(i));
+                    }
+                } else {
+                    for (String c : this.getCommandExamples()) {
+                        sender.sendMessage(c);
+                    }
+                }
+            }
+        }
 }

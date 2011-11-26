@@ -19,7 +19,7 @@ public class CommandHandler {
     protected List<Command> allCommands;
 
     protected PermissionsInterface permissions;
-    private double version = 2;
+    private double version = 3;
 
     public CommandHandler(JavaPlugin plugin, PermissionsInterface permissions) {
         this.plugin = plugin;
@@ -110,7 +110,7 @@ public class CommandHandler {
             // Special case:
             // If the ONLY param is a '?' show them the usage.
             if (parsedArgs.size() == 1 && parsedArgs.get(0).equals("?") && this.permissions.hasAnyPermission(sender, bestMatch.getAllPermissionStrings(), bestMatch.isOpRequired())) {
-                this.showHelp(sender, bestMatch);
+                bestMatch.showHelp(sender);
             } else {
                 checkAndRunCommand(sender, parsedArgs, bestMatch);
             }
@@ -250,37 +250,12 @@ public class CommandHandler {
             if (foundCommand.checkArgLength(parsedArgs)) {
                 foundCommand.runCommand(sender, parsedArgs);
             } else {
-                showHelp(sender, foundCommand);
+                foundCommand.showHelp(sender);
             }
         } else {
             sender.sendMessage("You do not have any of the required permission(s):");
             for (String perm : foundCommand.getAllPermissionStrings()) {
                 sender.sendMessage(" - " + ChatColor.GREEN + perm);
-            }
-        }
-    }
-
-    private void showHelp(CommandSender sender, Command foundCommand) {
-        sender.sendMessage(ChatColor.AQUA + "--- " + foundCommand.getCommandName() + " ---");
-        sender.sendMessage(ChatColor.YELLOW + foundCommand.getCommandDesc());
-        sender.sendMessage(ChatColor.DARK_AQUA + foundCommand.getCommandUsage());
-        sender.sendMessage("Permission: " + ChatColor.GREEN + foundCommand.getPermissionString());
-        String keys = "";
-        for (String key : foundCommand.getKeyStrings()) {
-            keys += key + ", ";
-        }
-        keys = keys.substring(0, keys.length() - 2);
-        sender.sendMessage(ChatColor.BLUE + "Aliases: " + ChatColor.RED + keys);
-        if (foundCommand.getCommandExamples().size() > 0) {
-            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Examples:");
-            if (sender instanceof Player) {
-                for (int i = 0; i < 4 && i < foundCommand.getCommandExamples().size(); i++) {
-                    sender.sendMessage(foundCommand.getCommandExamples().get(i));
-                }
-            } else {
-                for (String c : foundCommand.getCommandExamples()) {
-                    sender.sendMessage(c);
-                }
             }
         }
     }
