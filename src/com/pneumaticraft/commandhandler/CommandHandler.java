@@ -19,7 +19,7 @@ public class CommandHandler {
     protected List<Command> allCommands;
 
     protected PermissionsInterface permissions;
-    private double version = 4;
+    private double version = 5;
 
     public CommandHandler(JavaPlugin plugin, PermissionsInterface permissions) {
         this.plugin = plugin;
