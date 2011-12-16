@@ -47,8 +47,11 @@ public class CommandHandler {
         return this.allCommands;
     }
 
-
     public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
+        this.locateAndRunCommand(sender, args);
+    }
+
+    public boolean locateAndRunCommand(CommandSender sender, List<String> args, boolean notifySender) {
         List<String> parsedArgs = parseAllQuotedStrings(args);
         CommandKey key = null;
 
@@ -67,8 +70,12 @@ public class CommandHandler {
             }
         }
 
-        processFoundCommands(foundCommands, foundKeys, sender, parsedArgs);
+        processFoundCommands(foundCommands, foundKeys, sender, parsedArgs, notifySender);
         return true;
+    }
+
+    private void processFoundCommands(List<Command> foundCommands, List<CommandKey> foundKeys, CommandSender sender, List<String> parsedArgs) {
+        this.processFoundCommands(foundCommands, foundKeys, sender, parsedArgs, true); // Notify sender by default
     }
 
     /**
@@ -76,10 +83,11 @@ public class CommandHandler {
      *
      * @param foundCommands A list of all matching commands.
      * @param foundKeys     A list of the key that was matched the command.
+     * @param sender        The sender of the original command
      * @param parsedArgs    The arguments who have been combined, ie: "The world" is one argument
-     * @param parsedArgs
+     * @param notifySender  Whether to send optional messages to the command sender
      */
-    private void processFoundCommands(List<Command> foundCommands, List<CommandKey> foundKeys, CommandSender sender, List<String> parsedArgs) {
+    private void processFoundCommands(List<Command> foundCommands, List<CommandKey> foundKeys, CommandSender sender, List<String> parsedArgs, boolean notifySender) {
 
         if (foundCommands.size() == 0) {
             return;
@@ -112,7 +120,7 @@ public class CommandHandler {
             if (parsedArgs.size() == 1 && parsedArgs.get(0).equals("?") && this.permissions.hasAnyPermission(sender, bestMatch.getAllPermissionStrings(), bestMatch.isOpRequired())) {
                 bestMatch.showHelp(sender);
             } else {
-                checkAndRunCommand(sender, parsedArgs, bestMatch);
+                checkAndRunCommand(sender, parsedArgs, bestMatch, notifySender);
             }
         }
     }
@@ -245,7 +253,7 @@ public class CommandHandler {
         return null;
     }
 
-    private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand) {
+    private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand, boolean notifySender) {
         if (this.permissions.hasAnyPermission(sender, foundCommand.getAllPermissionStrings(), foundCommand.isOpRequired())) {
             if (foundCommand.checkArgLength(parsedArgs)) {
                 foundCommand.runCommand(sender, parsedArgs);
@@ -253,10 +261,16 @@ public class CommandHandler {
                 foundCommand.showHelp(sender);
             }
         } else {
-            sender.sendMessage("You do not have any of the required permission(s):");
-            for (String perm : foundCommand.getAllPermissionStrings()) {
-                sender.sendMessage(" - " + ChatColor.GREEN + perm);
+            if(notifySender) {
+                sender.sendMessage("You do not have any of the required permission(s):");
+                for (String perm : foundCommand.getAllPermissionStrings()) {
+                    sender.sendMessage(" - " + ChatColor.GREEN + perm);
+                }
             }
         }
+    }
+
+    private void checkAndRunCommand(CommandSender sender, List<String> parsedArgs, Command foundCommand) {
+        this.checkAndRunCommand(sender, parsedArgs, foundCommand, true); // Notify sender by default
     }
 }
