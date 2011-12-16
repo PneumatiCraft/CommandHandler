@@ -48,7 +48,7 @@ public class CommandHandler {
     }
 
     public boolean locateAndRunCommand(CommandSender sender, List<String> args) {
-        this.locateAndRunCommand(sender, args);
+        return this.locateAndRunCommand(sender, args);
     }
 
     public boolean locateAndRunCommand(CommandSender sender, List<String> args, boolean notifySender) {
