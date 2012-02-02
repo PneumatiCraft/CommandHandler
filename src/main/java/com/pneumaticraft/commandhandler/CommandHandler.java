@@ -3,13 +3,17 @@ package com.pneumaticraft.commandhandler;
 import com.lithium3141.shellparser.ShellParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
 
 public class CommandHandler {
 
@@ -19,14 +23,31 @@ public class CommandHandler {
     protected List<Command> allCommands;
 
     protected PermissionsInterface permissions;
-    private double version = 5;
+    private Properties props = new Properties();
+    private double version;
 
     public CommandHandler(JavaPlugin plugin, PermissionsInterface permissions) {
+        try {
+            props.load(this.getClass().getResourceAsStream("/allpay.properties"));
+            version = Integer.parseInt(props.getProperty("version", "-1"));
+        } catch (NumberFormatException e) {
+            this.logBadCH(plugin);
+        } catch (FileNotFoundException e) {
+            this.logBadCH(plugin);
+        } catch (IOException e) {
+            this.logBadCH(plugin);
+        }
         this.plugin = plugin;
 
         this.allCommands = new ArrayList<Command>();
         this.queuedCommands = new ArrayList<QueuedCommand>();
         this.permissions = permissions;
+    }
+
+    private void logBadCH(Plugin plugin) {
+        plugin.getLogger().log(Level.SEVERE,
+                        String.format("AllPay looks corrupted, meaning this plugin (%s) is corrupted too!",
+                        plugin.getDescription().getName()));
     }
 
     public double getVersion() {
