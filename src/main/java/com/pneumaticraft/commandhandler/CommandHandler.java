@@ -28,7 +28,7 @@ public class CommandHandler {
 
     public CommandHandler(JavaPlugin plugin, PermissionsInterface permissions) {
         try {
-            props.load(this.getClass().getResourceAsStream("/allpay.properties"));
+            props.load(this.getClass().getResourceAsStream("/commandhandler.properties"));
             version = Integer.parseInt(props.getProperty("version", "-1"));
         } catch (NumberFormatException e) {
             this.logBadCH(plugin);
@@ -46,7 +46,7 @@ public class CommandHandler {
 
     private void logBadCH(Plugin plugin) {
         plugin.getLogger().log(Level.SEVERE,
-                        String.format("AllPay looks corrupted, meaning this plugin (%s) is corrupted too!",
+                        String.format("CommandHandler looks corrupted, meaning this plugin (%s) is corrupted too!",
                         plugin.getDescription().getName()));
     }
 
