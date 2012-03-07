@@ -4,7 +4,6 @@ import com.lithium3141.shellparser.ShellParser;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.util.logging.Level;
 
 public class CommandHandler {
 
-    protected JavaPlugin plugin;
+    protected Plugin plugin;
 
     protected List<QueuedCommand> queuedCommands;
     protected List<Command> allCommands;
@@ -26,7 +25,7 @@ public class CommandHandler {
     private Properties props = new Properties();
     private double version;
 
-    public CommandHandler(JavaPlugin plugin, PermissionsInterface permissions) {
+    public CommandHandler(Plugin plugin, PermissionsInterface permissions) {
         try {
             props.load(this.getClass().getResourceAsStream("/commandhandler.properties"));
             version = Integer.parseInt(props.getProperty("version", "-1"));

@@ -5,14 +5,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class Command {
-    protected JavaPlugin plugin;
+    protected Plugin plugin;
 
     private int minimumArgLength;
     private int maximumArgLength;
@@ -26,7 +26,7 @@ public abstract class Command {
     private Permission permission;
     private List<Permission> auxPerms;
 
-    public Command(JavaPlugin plugin) {
+    public Command(Plugin plugin) {
         this.plugin = plugin;
         this.auxPerms = new ArrayList<Permission>();
         this.commandKeys = new ArrayList<CommandKey>();
@@ -235,7 +235,7 @@ public abstract class Command {
     }
 
     /** @return the plugin */
-    protected JavaPlugin getPlugin() {
+    protected Plugin getPlugin() {
         return this.plugin;
     }
 
