@@ -133,12 +133,13 @@ public abstract class Command {
         String[] seperated = permStringChopped.split("\\.");
         String parentPermString = getParentPerm(seperated);
         if (parentPermString == null) {
-            addToRootPermission("*", permStringChopped);
-            addToRootPermission("*.*", permStringChopped);
+            // This is bad form in the bukkit permission environment.
+            //addToRootPermission("*", permStringChopped);
+            //addToRootPermission("*.*", permStringChopped);
             return;
         }
         Permission parentPermission = this.plugin.getServer().getPluginManager().getPermission(parentPermString);
-        // Creat parent and grandparents
+        // Create parent and grandparents
         if (parentPermission == null) {
             parentPermission = new Permission(parentPermString);
             this.plugin.getServer().getPluginManager().addPermission(parentPermission);
