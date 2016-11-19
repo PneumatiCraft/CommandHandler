@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.pneumaticraft.commandhandler</groupId>
     <artifactId>CommandHandler</artifactId>
-    <version>9</version>
+    <version>10</version>
     <name>CommandHandler</name>
     <description>A nifty Command Dispatcher for Bukkit Plugins.</description>
     <properties>
@@ -29,8 +29,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <!-- Jar Plugin -->
